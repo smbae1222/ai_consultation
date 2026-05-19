@@ -544,18 +544,6 @@ a { color: inherit; text-decoration: none; }
 .t-dot:nth-child(3){ animation-delay:.4s }
 @keyframes tdot { 0%,80%,100%{opacity:.3;transform:translateY(0)} 40%{opacity:1;transform:translateY(-3px)} }
 
-/* confidence widget */
-.conf-widget {
-  margin-top: var(--space-5);
-  padding: var(--space-5) var(--space-6);
-  border: 1px solid var(--color-border);
-  background: var(--color-surface-panel);
-}
-.conf-hd { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3); }
-.conf-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-text-primary); }
-.conf-pct   { font-size: var(--font-size-xs); color: var(--color-surface-muted); }
-.conf-track { height: 1px; background: var(--color-border); }
-.conf-fill  { height: 1px; width: 0; transition: width 1s cubic-bezier(.25,1,.5,1); }
 
 /* handover card */
 .ho-card {
@@ -573,7 +561,9 @@ a { color: inherit; text-decoration: none; }
 /* quick replies */
 .quick-replies {
   display: flex; flex-wrap: wrap; gap: var(--space-3);
-  padding: var(--space-3) 0 0 27px;
+  padding: var(--space-5) 0 0 0;
+  border-top: 1px solid var(--color-border-subtle);
+  margin-top: var(--space-5);
 }
 .qr-btn {
   padding: var(--space-3) var(--space-6);
@@ -888,24 +878,25 @@ a { color: inherit; text-decoration: none; }
 
 /* ── agent waiting ── */
 .agent-waiting {
-  padding: var(--space-5) var(--space-6);
-  border: 1px solid rgba(154,114,64,0.25);
-  background: var(--color-accent-dim);
-  display: flex; align-items: center; gap: var(--space-6);
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 8px 16px;
+  background: rgba(0,0,0,0.55);
+  border-radius: 20px;
+  backdrop-filter: blur(4px);
 }
 .waiting-spinner {
   width: 14px; height: 14px; flex-shrink: 0;
-  border: 1.5px solid rgba(154,114,64,0.3);
-  border-top-color: var(--color-accent);
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #ffffff;
   border-radius: 50%;
-  animation: spin 0.9s linear infinite;
+  animation: spin 0.8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 .waiting-text {
-  font-size: var(--font-size-xs); color: var(--color-accent); letter-spacing: 0.04em;
+  font-size: 13px; color: #ffffff; font-weight: 600; letter-spacing: 0.02em;
 }
 .waiting-sub {
-  font-size: 10px; color: var(--color-text-primary); margin-top: 2px; opacity: 0.6;
+  font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 2px;
 }
 
 /* ── agent connected card ── */
@@ -1020,9 +1011,9 @@ a { color: inherit; text-decoration: none; }
     <div class="scenario-strip" role="tablist" aria-label="시나리오 선택">
       <button class="scene-btn" role="tab" aria-selected="true"  onclick="loadScene(0,this)">① FAQ 자동 해결</button>
       <button class="scene-btn" role="tab" aria-selected="false" onclick="loadScene(1,this)">② 추가 질문</button>
-      <button class="scene-btn" role="tab" aria-selected="false" onclick="loadScene(2,this)">③ VIP 핸드오버</button>
+      <button class="scene-btn" role="tab" aria-selected="false" onclick="loadScene(2,this)">③ VIP 관리</button>
       <button class="scene-btn" role="tab" aria-selected="false" onclick="loadScene(3,this)">④ 정책 문의</button>
-      <button class="scene-btn" role="tab" aria-selected="false" onclick="loadScene(4,this)">⑤ CSAT 종료</button>
+      <button class="scene-btn" role="tab" aria-selected="false" onclick="loadScene(4,this)">⑤ 고객 만족</button>
       <button class="scene-btn" role="tab" aria-selected="false" onclick="loadScene(5,this)">⑥ 불만 접수</button>
     </div>
 
@@ -1035,6 +1026,14 @@ a { color: inherit; text-decoration: none; }
       <button class="kw-btn" onclick="pickKW(this,'매장 위치')">매장 위치</button>
       <button class="kw-btn" onclick="pickKW(this,'VIP 서비스')">VIP 서비스</button>
       <button class="kw-btn" onclick="pickKW(this,'향수 용량')">향수 용량</button>
+      <button class="kw-btn" onclick="pickKW(this,'부티크 예약')">부티크 예약</button>
+      <button class="kw-btn" onclick="pickKW(this,'세금 환급')">세금 환급</button>
+      <button class="kw-btn" onclick="pickKW(this,'수선 서비스')">수선 서비스</button>
+      <button class="kw-btn" onclick="pickKW(this,'결제 수단')">결제 수단</button>
+      <button class="kw-btn" onclick="pickKW(this,'배송 안내')">배송 안내</button>
+      <button class="kw-btn" onclick="pickKW(this,'립스틱 지속')">립스틱 지속</button>
+      <button class="kw-btn" onclick="pickKW(this,'향수 보관')">향수 보관</button>
+      <button class="kw-btn" onclick="pickKW(this,'시계 방수')">시계 방수</button>
     </div>
 
     <!-- header -->
@@ -1330,7 +1329,7 @@ const SCENES = [
   {
     label:"FAQ 자동 해결 시나리오",
     steps:[
-      {r:"sys", t:"고객이 카카오 상담톡을 통해 연결되었습니다.", d:400, node:"start"},
+      {r:"sys", t:"샤넬 고객이 연결되었습니다.", d:400, node:"start"},
       {r:"ai",  t:"안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?",
        d:700, intent:"인사/진입", conf:99, route:"자동 응대", node:"kw",
        sf:{nm:"김지수", tier:"VIP Gold", buy:"N°5 세트 · 2025.11"}},
@@ -1338,12 +1337,11 @@ const SCENES = [
       {r:"typ", d:400, node:"emo"},
       {r:"ai",  t:"코코 크러시 브레이슬릿은 현재 18K 베이지 골드와 화이트 골드 라인이 국내 부티크에서 구매 가능합니다.\n\n재고 상황은 매장마다 상이하므로, 방문 전 가까운 부티크에 사전 문의하시거나 예약 방문을 권장드립니다.",
        d:1100, intent:"제품 재고 문의", conf:94, route:"FAQ 자동 응대", node:"faq",
-       showConf:true, confCol:"var(--color-success)",
        related:["코코 크러시 가격","부티크 예약 방법","신제품 출시 일정"]},
       {r:"qr",  opts:["재고 매장 위치 안내","예약 방문 방법"], d:300},
       {r:"usr", t:"재고 매장 위치 안내 해주세요", d:600, node:"faq"},
       {r:"typ", d:500, node:"conf"},
-      {r:"ai",  t:"코코 크러시 재고 확인이 가능한 주요 부티크입니다.\n\n· 청담 메종 — 02-3015-8300\n· 롯데 에비뉴엘 잠실 — 02-3213-5002\n· 신세계 강남 — 02-3479-1904\n\n방문 전 전화 문의 또는 chanel.com에서 예약하시길 권장드립니다.",
+      {r:"ai",  t:"코코 크러시 재고 확인이 가능한 주요 부티크입니다.\n\n패션·파인 주얼리\n· 청담 메종:  02-3015-8300\n· 롯데 에비뉴엘 잠실:  02-3213-5002\n· 신세계 강남:  02-3479-1904\n\n방문 전 전화 문의 또는 chanel.com에서 예약하시길 권장드립니다.",
        d:1000, intent:"매장 위치", conf:97, route:"FAQ 자동 응대", node:"faq",
        related:["영업 시간 안내","주차 안내","온라인 구매 방법"],
        isClosing:true, actionBtns:["상담원 연결","상담 종료"]},
@@ -1354,7 +1352,7 @@ const SCENES = [
   {
     label:"추가 질문 → 해결 시나리오",
     steps:[
-      {r:"sys", t:"신규 고객이 연결되었습니다.", d:400, node:"start"},
+      {r:"sys", t:"샤넬 고객이 연결되었습니다.", d:400, node:"start"},
       {r:"ai",  t:"안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?",
        d:700, intent:"인사/진입", conf:99, route:"자동 응대", node:"kw",
        sf:{nm:"박서현", tier:"일반", buy:"없음"}},
@@ -1362,20 +1360,18 @@ const SCENES = [
       {r:"typ", d:500, node:"emo"},
       {r:"ai",  t:"교환 관련 안내를 도와드리겠습니다. 원활한 처리를 위해 확인이 필요합니다.\n\n어떤 제품을 교환하시고자 하시나요?",
        d:1000, intent:"교환 문의 (정보 부족)", conf:55, route:"추가 질문 유도", node:"slot",
-       showConf:true, confCol:"var(--color-warning)",
        related:["교환 가능 기간","교환 불가 제품","반품 절차"]},
       {r:"usr", t:"뷰티 제품이요 립스틱", d:800, node:"slot"},
       {r:"typ", d:400, node:"conf"},
       {r:"ai",  t:"뷰티 제품 교환 안내드립니다.\n\n· 구매일로부터 30일 이내, 미개봉 상태인 경우 교환 가능합니다.\n· 구매하신 부티크 또는 공식 온라인 스토어에서 처리해 드립니다.\n· 영수증 또는 구매 확인 이메일을 지참해 주세요.",
-       d:1100, intent:"뷰티 제품 교환", conf:91, route:"FAQ 자동 응대", node:"faq",
-       showConf:true, confCol:"var(--color-success)", isClosing:true},
+       d:1100, intent:"뷰티 제품 교환", conf:91, route:"FAQ 자동 응대", node:"faq", isClosing:true},
     ]
   },
-  /* ③ VIP 핸드오버 */
+  /* ③ VIP 관리 */
   {
     label:"VIP 핸드오버 시나리오",
     steps:[
-      {r:"sys", t:"VIP 고객이 연결되었습니다. Salesforce 조회 완료.", d:400, node:"start"},
+      {r:"sys", t:"VIP 고객이 연결되었습니다.", d:400, node:"start"},
       {r:"ai",  t:"안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 언제나 특별한 경험을 위해 도움드리겠습니다.",
        d:800, intent:"인사/진입", conf:99, route:"자동 응대", node:"kw",
        sf:{nm:"이윤아", tier:"VIP Platinum", buy:"22 백 컬렉션 · 2026.01"}},
@@ -1383,7 +1379,6 @@ const SCENES = [
       {r:"typ", d:600, node:"emo"},
       {r:"ai",  t:"고객님께서는 CHANEL의 소중한 VIP Platinum 고객이십니다. 프라이빗 쇼핑 예약 및 전담 MD 연결은 전담 상담팀에서 안내해 드리는 것이 더욱 만족스러운 경험을 제공해 드릴 수 있습니다.\n\n지금 바로 전담 상담원과 연결해 드릴까요?",
        d:1300, intent:"프라이빗 서비스", conf:68, route:"핸드오버 제안", node:"ho",
-       showConf:true, confCol:"var(--color-warning)",
        showHO:true, hoData:{intent:"프라이빗 쇼핑 예약 / 전담 MD 요청", tier:"VIP Platinum", buy:"22 백 컬렉션 (2026.01)"},
        isClosing:true, actionBtns:["상담원 연결","상담 종료"]},
       {r:"csat", d:700, node:"csat"},
@@ -1400,13 +1395,12 @@ const SCENES = [
       {r:"typ", d:600, node:"emo"},
       {r:"ai",  t:"환불 관련 안내를 드리겠습니다.\n\n※ CHANEL 공식 환불 정책\n구매일로부터 30일 이내, 미사용·미개봉 상태의 제품에 한하여 환불이 가능합니다. 사용 흔적이 있거나 구매 후 30일이 경과한 경우 환불이 제한될 수 있습니다.\n\n정확한 처리를 위해 구매 매장 또는 공식 고객센터(1544-1888)로 문의 또는 상담원 연결을 권장드립니다.",
        d:1300, intent:"환불 문의", conf:87, route:"정책 고정문구 삽입", node:"faq",
-       showConf:true, confCol:"var(--color-success)",
        related:["교환 정책 차이","영수증 없는 경우","온라인 구매 환불"],
        isClosing:true, actionBtns:["상담원 연결","상담 종료"]},
       {r:"csat", d:700, node:"csat"},
     ]
   },
-  /* ⑤ CSAT 종료 */
+  /* ⑤ 고객 만족 */
   {
     label:"CSAT 종료 시나리오",
     steps:[
@@ -1415,14 +1409,13 @@ const SCENES = [
        d:700, node:"kw", sf:{nm:"정하은", tier:"일반", buy:"N°5 오드퍼퓸 50ml"}},
       {r:"usr", t:"샤넬 N°5 향수 용량 종류 알려주세요", d:900, node:"nlu"},
       {r:"typ", d:500, node:"emo"},
-      {r:"ai",  t:"CHANEL N°5 오 드 퍼퓸 출시 용량입니다.\n\n· 35 mL — 소장 및 선물용\n· 50 mL — 일상 사용\n· 100 mL — 가장 인기 있는 라인\n· 200 mL — 스페셜 에디션 (시즌 한정)\n\n추가로 궁금하신 사항이 있으신가요?",
+      {r:"ai",  t:"CHANEL N°5 오 드 퍼퓸 출시 용량입니다.\n\n· 35 mL:  소장 및 선물용\n· 50 mL:   일상 사용\n· 100 mL:   가장 인기 있는 라인\n· 200 mL:   스페셜 에디션 (시즌 한정)\n\n추가로 궁금하신 사항이 있으신가요?",
        d:1100, intent:"제품 용량 문의", conf:95, route:"FAQ 자동 응대", node:"faq",
-       showConf:true, confCol:"var(--color-success)",
        related:["N°5 가격 안내","선물 포장 서비스","향수 샘플 요청"]},
       {r:"usr", t:"충분해요, 감사합니다.", d:800, node:"faq"},
-      {r:"ai",  t:"CHANEL AI 상담을 이용해 주셔서 감사합니다. 앞으로도 항상 특별한 경험을 전해드리겠습니다.", d:800, node:"csat", isClosing:true, actionBtns:["상담원 연결","상담 종료"]},
-      {r:"csat", d:600, node:"csat"},
-      {r:"sys", t:"[ 상담 종료 ] Salesforce 이력 자동 저장 완료.", d:1200, sfSync:"ok", node:"sf",
+      {r:"ai",  t:"CHANEL AI 상담을 이용해 주셔서 감사합니다. 앞으로도 항상 특별한 경험을 전해드리겠습니다.", d:900, node:"csat"},
+      {r:"csat", d:700, node:"csat", autoClose:true},
+      {r:"sys", t:"상담 종료", d:1200, sfSync:"ok", node:"sf",
        crmSummary:{
          summary:"N°5 오 드 퍼퓸 용량 문의. FAQ 자동 응대로 해결. 고객 만족 확인.",
          tags:["향수 문의","N°5","제품 정보","FAQ 해결","일반 등급"],
@@ -1440,14 +1433,12 @@ const SCENES = [
        sf:{nm:"홍민준", tier:"일반", buy:"클래식 플랩 백 · 2025.12"}},
       {r:"usr", t:"구매한 지 일주일도 안 됐는데 지퍼가 고장났어요. 이게 말이 되나요?", d:1000, node:"nlu"},
       {r:"typ", d:500, node:"emo"},
-      {r:"ai",  t:"고객님, 불편을 드려 대단히 죄송합니다. 구매 직후 불량이 발생하셨군요.\n\n정확한 확인을 위해 잠시 도움을 드리겠습니다.",
-       d:1200, intent:"제품 불량 / 불만", conf:72, route:"처리 중", node:"slot",
-       showConf:true, confCol:"var(--color-warning)"},
+      {r:"ai",  t:"고객님, 불편을 드려 대단히 죄송합니다. 구매 직후 불량이 발생하셨군요.\n\n정확한 확인을 위해 잠시 기다려 주십시오.",
+       d:1200, intent:"제품 불량 / 불만", conf:72, route:"처리 중", node:"slot"},
       {r:"usr", t:"정말 화가 나요. 이런 품질이라면 사지 않았을 거예요. 빨리 처리해 주세요!", d:900, node:"emo"},
       {r:"typ", d:400, node:"conf"},
       {r:"ai",  t:"고객님의 불편한 심정을 충분히 이해합니다. 지금 즉시 전담 상담원에게 연결해 드리겠습니다.",
        d:1100, intent:"제품 불량 (강한 불만)", conf:48, route:"감정 분노 → 즉시 이관", node:"angry",
-       showConf:true, confCol:"var(--color-danger)",
        showHO:true, hoData:{intent:"제품 불량 / 지퍼 파손 즉시 처리 요청", tier:"일반", buy:"클래식 플랩 백 (2025.12)"},
        autoConnect:true},
     ]
@@ -1541,9 +1532,9 @@ function render(item) {
       body.innerHTML = `
         <div class="crm-card">
           <div class="crm-card-title">Salesforce 저장 완료</div>
-          <div class="crm-row"><strong>요약</strong></div>
+          <div class="crm-row">요약</div>
           <div class="crm-row" style="margin-bottom:var(--space-5)">${esc(cs.summary)}</div>
-          <div class="crm-row"><strong>마케팅 메모</strong></div>
+          <div class="crm-row">마케팅 메모</div>
           <div class="crm-row" style="margin-bottom:var(--space-4)">${esc(cs.marketingNote)}</div>
           <div class="crm-tags">${cs.tags.map(t=>`<span class="crm-tag">${esc(t)}</span>`).join('')}</div>
         </div>`;
@@ -1588,16 +1579,47 @@ function render(item) {
   }
 
   if(item.r === 'qr') {
-    const d = mkEl('div','quick-replies');
-    d.setAttribute('role','group');
-    d.setAttribute('aria-label','빠른 답변 옵션');
-    d.innerHTML = item.opts.map(o =>
+    /* 직전 AI 버블 안에 QR 버튼 삽입 */
+    const allAI = C.querySelectorAll('.msg.ai .msg-bubble');
+    const targetBubble = allAI.length ? allAI[allAI.length - 1] : null;
+    const qrWrap = mkEl('div','quick-replies');
+    qrWrap.setAttribute('role','group');
+    qrWrap.setAttribute('aria-label','빠른 답변 옵션');
+    qrWrap.innerHTML = item.opts.map(o =>
       `<button class="qr-btn" onclick="pickQR('${o}',this)">${esc(o)}</button>`
     ).join('');
-    C.appendChild(d); scrollBtm(); return;
+    if(targetBubble) {
+      targetBubble.appendChild(qrWrap);
+    } else {
+      C.appendChild(qrWrap);
+    }
+    scrollBtm(); return;
   }
 
   if(item.r === 'csat') {
+    /* autoClose:true — 감사 메시지 직후 CSAT UI 자동 출력 */
+    if(item.autoClose) {
+      activateNode('csat');
+      addLog('CSAT 자동 표시');
+      setTimeout(() => {
+        const d = mkEl('div','msg ai');
+        d.innerHTML = `<div class="msg-avi ai" aria-hidden="true">샤넬</div>
+          <div class="msg-body">
+            <div class="msg-sender">샤넬 AI 어시스턴트</div>
+            <div class="msg-bubble">
+              오늘 상담이 도움이 되셨나요? 만족도를 알려주시면 더 나은 서비스를 위해 활용하겠습니다.
+              <div class="csat-stars" role="group" aria-label="만족도 선택">
+                ${[1,2,3,4,5].map(i=>`<button class="csat-star" onclick="rateCsat(${i})"
+                  aria-label="${i}점" data-v="${i}">★</button>`).join('')}
+              </div>
+              <span class="msg-meta" id="csatNote">별점을 선택해 주세요</span>
+            </div>
+          </div>`;
+        C.appendChild(d);
+        scrollBtm();
+      }, 500);
+      return;
+    }
     /* CSAT UI는 상담 종료 버튼 클릭 시(actionClose)에만 표시 — 여기선 스텝만 소비 */
     if(auto && item.autoUserMsg) {
       const d = mkEl('div','msg user');
@@ -1638,19 +1660,6 @@ function render(item) {
 
   if(item.r === 'ai') {
     let extra = '';
-    if(item.showConf) {
-      const uid = 'cb'+step;
-      extra += `<div class="conf-widget">
-        <div class="conf-hd">
-          <span class="conf-label">NLU Confidence</span>
-          <span class="conf-pct">${item.conf}%</span>
-        </div>
-        <div class="conf-track">
-          <div class="conf-fill" id="${uid}" style="background:${item.confCol}"></div>
-        </div>
-      </div>`;
-      setTimeout(()=>{ const e=document.getElementById(uid); if(e)e.style.width=item.conf+'%'; },80);
-    }
     if(item.showHO && item.hoData) {
       const ho = item.hoData;
       extra += `<div class="ho-card">
@@ -1728,40 +1737,546 @@ function pickQR(text, btn) {
   setTimeout(playNext, 700);
 }
 
+/* ══════════════════════════════════════
+   FAQ KEYWORD SCENES
+   — 키워드별 전용 상담 시나리오 (FAQ 원문 기반)
+══════════════════════════════════════ */
+const FAQ_SCENES = {
+  '재고 확인': {
+    label: 'FAQ — 재고 확인',
+    userMsg: '코코 크러시 브레이슬릿 재고 확인하고 싶어요.',
+    steps: [
+      {r:'sys', t:'고객이 FAQ 키워드 "재고 확인"으로 연결되었습니다.', d:300, node:'start'},
+      {r:'ai',  t:'안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?',
+       d:600, intent:'인사/진입', conf:99, route:'자동 응대', node:'kw',
+       sf:{nm:'고객', tier:'—', buy:'—'}},
+      {r:'usr', t:'코코 크러시 브레이슬릿 재고 확인하고 싶어요.', d:800, node:'nlu'},
+      {r:'typ', d:400, node:'faq'},
+      {r:'ai',  t:'코코 크러시 브레이슬릿은 현재 18K 베이지 골드와 화이트 골드 라인이 국내 부티크에서 구매 가능합니다.\n\n재고 상황은 매장마다 상이하므로, 방문 전 가까운 부티크에 사전 문의하시거나 예약 방문을 권장드립니다.\n\n패션·파인 주얼리\n· 청담 메종:  02-3015-8300\n· 롯데 에비뉴엘 잠실:  02-3213-5002\n· 신세계 강남:  02-3479-1904',
+       d:1000, intent:'제품 재고 문의', conf:94, route:'FAQ 자동 응대', node:'faq',
+       related:['교환·반품 정책','매장 위치 안내','VIP 서비스 문의'],
+       isClosing:true, actionBtns:['상담원 연결','상담 종료']},
+      {r:'csat', d:700, node:'csat'},
+    ]
+  },
+  '교환·반품': {
+    label: 'FAQ — 교환·반품',
+    userMsg: '제품 교환·반품 방법을 알고 싶어요.',
+    steps: [
+      {r:'sys', t:'고객이 FAQ 키워드 "교환·반품"으로 연결되었습니다.', d:300, node:'start'},
+      {r:'ai',  t:'안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?',
+       d:600, intent:'인사/진입', conf:99, route:'자동 응대', node:'kw',
+       sf:{nm:'고객', tier:'—', buy:'—'}},
+      {r:'usr', t:'제품 교환·반품 방법을 알고 싶어요.', d:800, node:'nlu'},
+      {r:'typ', d:400, node:'faq'},
+      {r:'ai',  t:'샤넬 패션 제품의 반품 및 교환 안내드립니다.\n\n· 구매일로부터 14일 이내\n· 착용하지 않은 상태 + 모든 태그 부착\n· 영수증 원본 지참 필수\n· 구매하신 국내 샤넬 패션 부티크 방문 (면세점·백화점 제외)\n\n뷰티 온라인 스토어 구매 시에는 수령일로부터 7일 이내, 미개봉 상태에서 신청 가능합니다.',
+       d:1100, intent:'반품·교환 문의', conf:96, route:'FAQ 자동 응대', node:'faq',
+       related:['환불 정책','매장 위치 안내','온라인 구매 정책'],
+       isClosing:true, actionBtns:['상담원 연결','상담 종료']},
+      {r:'csat', d:700, node:'csat'},
+    ]
+  },
+  '환불 정책': {
+    label: 'FAQ — 환불 정책',
+    userMsg: '환불은 어떻게 받을 수 있나요?',
+    steps: [
+      {r:'sys', t:'고객이 FAQ 키워드 "환불 정책"으로 연결되었습니다.', d:300, node:'start'},
+      {r:'ai',  t:'안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?',
+       d:600, intent:'인사/진입', conf:99, route:'자동 응대', node:'kw',
+       sf:{nm:'고객', tier:'—', buy:'—'}},
+      {r:'usr', t:'환불은 어떻게 받을 수 있나요?', d:800, node:'nlu'},
+      {r:'typ', d:400, node:'faq'},
+      {r:'ai',  t:'환불 절차를 안내드립니다.\n\n온라인 스토어 구매\n· 수령일로부터 7일 이내 신청\n· 반품 도착 후 검수 완료 기준 영업일 3~5일 이내 환불\n· 카드사 정책에 따라 처리 기간이 달라질 수 있습니다.\n\n부티크 구매\n· 구매일로부터 14일 이내, 영수증 원본 지참\n· 착용하지 않은 상태 + 태그 부착 필수\n\n추가 문의는 고객 센터(080-805-9638)로 연락 주세요.',
+       d:1100, intent:'환불 정책 문의', conf:95, route:'FAQ 자동 응대', node:'faq',
+       related:['교환·반품 방법','온라인 결제 수단','주문 취소 방법'],
+       isClosing:true, actionBtns:['상담원 연결','상담 종료']},
+      {r:'csat', d:700, node:'csat'},
+    ]
+  },
+  '매장 위치': {
+    label: 'FAQ — 매장 위치',
+    userMsg: '가까운 샤넬 매장 위치를 알고 싶어요.',
+    steps: [
+      {r:'sys', t:'고객이 FAQ 키워드 "매장 위치"로 연결되었습니다.', d:300, node:'start'},
+      {r:'ai',  t:'안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?',
+       d:600, intent:'인사/진입', conf:99, route:'자동 응대', node:'kw',
+       sf:{nm:'고객', tier:'—', buy:'—'}},
+      {r:'usr', t:'가까운 샤넬 매장 위치를 알고 싶어요.', d:800, node:'nlu'},
+      {r:'typ', d:400, node:'faq'},
+      {r:'ai',  t:'국내 주요 샤넬 부티크 안내드립니다.\n\n패션·파인 주얼리\n· 청담 메종:  02-3015-8300\n· 롯데 에비뉴엘 잠실:  02-3213-5002\n· 신세계 강남:  02-3479-1904\n\n고객 센터\n운영 시간: 오전 10시 ~ 오후 7시 (주말·공휴일 제외)\n이메일: customer.service@chanel.co.kr\n전화(패션): 080-805-9628\n전화(뷰티): 080-805-9638\n\n방문 전 예약을 권장드립니다.',
+       d:1100, intent:'매장 위치 문의', conf:97, route:'FAQ 자동 응대', node:'faq',
+       related:['부티크 예약 방법','영업 시간 안내','고객 센터 연락처'],
+       isClosing:true, actionBtns:['상담원 연결','상담 종료']},
+      {r:'csat', d:700, node:'csat'},
+    ]
+  },
+  'VIP 서비스': {
+    label: 'FAQ — VIP 서비스',
+    userMsg: 'VIP 고객 서비스에 대해 알고 싶어요.',
+    steps: [
+      {r:'sys', t:'고객이 FAQ 키워드 "VIP 서비스"로 연결되었습니다.', d:300, node:'start'},
+      {r:'ai',  t:'안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?',
+       d:600, intent:'인사/진입', conf:99, route:'자동 응대', node:'kw',
+       sf:{nm:'고객', tier:'VIP', buy:'—'}},
+      {r:'usr', t:'VIP 고객 서비스에 대해 알고 싶어요.', d:800, node:'nlu'},
+      {r:'typ', d:400, node:'ho'},
+      {r:'ai',  t:'CHANEL VIP 고객 서비스에 대해 안내드립니다.\n\nVIP 고객님께는 아래와 같은 전용 서비스를 제공해 드리고 있습니다.\n\n· 프라이빗 쇼핑 예약 (전담 MD 배정)\n· 신제품 컬렉션 우선 안내\n· VIP 전용 이벤트 초청\n· 전담 상담팀 우선 연결\n\n보다 자세한 안내와 맞춤 서비스를 위해 전담 상담원과 연결해 드릴 수 있습니다.',
+       d:1200, intent:'VIP 서비스 문의', conf:88, route:'VIP 전담 응대', node:'ho',
+       showHO:true, hoData:{intent:'VIP 서비스 문의', tier:'VIP', buy:'—'},
+       isClosing:true, actionBtns:['상담원 연결','상담 종료']},
+      {r:'csat', d:700, node:'csat'},
+    ]
+  },
+  '향수 용량': {
+    label: 'FAQ — 향수 용량',
+    userMsg: '샤넬 향수 용량 종류가 궁금해요.',
+    steps: [
+      {r:'sys', t:'고객이 FAQ 키워드 "향수 용량"으로 연결되었습니다.', d:300, node:'start'},
+      {r:'ai',  t:'안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?',
+       d:600, intent:'인사/진입', conf:99, route:'자동 응대', node:'kw',
+       sf:{nm:'고객', tier:'—', buy:'—'}},
+      {r:'usr', t:'샤넬 향수 용량 종류가 궁금해요.', d:800, node:'nlu'},
+      {r:'typ', d:400, node:'faq'},
+      {r:'ai',  t:'CHANEL N°5 오 드 퍼퓸 출시 용량입니다.\n· 35 mL:  소장 및 선물용\n· 50 mL:   일상 사용\n· 100 mL:   가장 인기 있는 라인\n· 200 mL:   스페셜 에디션 (시즌 한정)',
+       d:1100, intent:'향수 용량 문의', conf:93, route:'FAQ 자동 응대', node:'faq',
+       related:['향수 보관 방법','향수 사용법','매장 위치 안내'],
+       isClosing:true, actionBtns:['상담원 연결','상담 종료']},
+      {r:'csat', d:700, node:'csat'},
+    ]
+  },
+
+  '부티크 예약': {
+    label: 'FAQ — 부티크 예약',
+    userMsg: '샤넬 부티크 방문 예약은 어떻게 하나요?',
+    steps: [
+      {r:'sys', t:'고객이 FAQ 키워드 "부티크 예약"으로 연결되었습니다.', d:300, node:'start'},
+      {r:'ai',  t:'안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?',
+       d:600, intent:'인사/진입', conf:99, route:'자동 응대', node:'kw',
+       sf:{nm:'고객', tier:'—', buy:'—'}},
+      {r:'usr', t:'샤넬 부티크 방문 예약은 어떻게 하나요?', d:800, node:'nlu'},
+      {r:'typ', d:400, node:'faq'},
+      {r:'ai',  t:'샤넬 부티크 방문 예약 안내드립니다.\n\n예약 방법\n· chanel.com에서 온라인 예약\n· 고객 센터 전화 예약\n· 카카오 채팅 상담을 통한 예약\n\n예약 후 방문하시면 전담 판매 직원의 맞춤 상담 서비스를 받으실 수 있습니다.\n\n고객 센터 (오전 10시 ~ 오후 7시, 주말·공휴일 제외)\n전화(패션): 080-805-9628\n전화(뷰티): 080-805-9638',
+       d:1100, intent:'부티크 예약 문의', conf:95, route:'FAQ 자동 응대', node:'faq',
+       related:['매장 위치 안내','VIP 서비스','고객 센터 연락처'],
+       isClosing:true, actionBtns:['상담원 연결','상담 종료']},
+      {r:'csat', d:700, node:'csat'},
+    ]
+  },
+
+  '세금 환급': {
+    label: 'FAQ — 세금 환급',
+    userMsg: '구매 시 세금 환급은 어떻게 받나요?',
+    steps: [
+      {r:'sys', t:'고객이 FAQ 키워드 "세금 환급"으로 연결되었습니다.', d:300, node:'start'},
+      {r:'ai',  t:'안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?',
+       d:600, intent:'인사/진입', conf:99, route:'자동 응대', node:'kw',
+       sf:{nm:'고객', tier:'—', buy:'—'}},
+      {r:'usr', t:'구매 시 세금 환급은 어떻게 받나요?', d:800, node:'nlu'},
+      {r:'typ', d:400, node:'faq'},
+      {r:'ai',  t:'세금 환급 안내드립니다.\n\n환급 조건\n· 국외 거주자 대상\n· 구매 당일 여권 제시 필수\n· 3만원 이상 구매 시 적용\n· 구매일로부터 3개월 이내 출국 필요\n\n적용 매장\n· 샤넬 패션 부티크 (백화점 제외)\n· 서울 플래그십 스토어\n· 백화점 및 서울 플래그십: 여권 제시 후 현장 환급\n\n자세한 내용은 구매 매장에서 안내받으실 수 있습니다.',
+       d:1200, intent:'세금 환급 문의', conf:94, route:'FAQ 자동 응대', node:'faq',
+       related:['결제 수단','매장 위치 안내','부티크 예약'],
+       isClosing:true, actionBtns:['상담원 연결','상담 종료']},
+      {r:'csat', d:700, node:'csat'},
+    ]
+  },
+
+  '수선 서비스': {
+    label: 'FAQ — 수선 서비스',
+    userMsg: '샤넬 제품 수선은 어디서 받을 수 있나요?',
+    steps: [
+      {r:'sys', t:'고객이 FAQ 키워드 "수선 서비스"로 연결되었습니다.', d:300, node:'start'},
+      {r:'ai',  t:'안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?',
+       d:600, intent:'인사/진입', conf:99, route:'자동 응대', node:'kw',
+       sf:{nm:'고객', tier:'—', buy:'—'}},
+      {r:'usr', t:'샤넬 제품 수선은 어디서 받을 수 있나요?', d:800, node:'nlu'},
+      {r:'typ', d:400, node:'faq'},
+      {r:'ai',  t:'샤넬 제품 수선 서비스 안내드립니다.\n\n· 샤넬 패션 부티크에서 수선 서비스 제공\n· 전문 인력이 제품을 꼼꼼히 점검 후 수선 내용 안내\n· 방문 전 예약을 권장드립니다\n\n사이즈 조절 서비스도 부티크에서 가능하며, 제품 특성에 따라 서비스 가능 여부가 다를 수 있습니다.\n\n파인 주얼리 및 시계 수선은 해당 부티크 또는 고객 센터로 문의해 주세요.\n전화(패션): 080-805-9628',
+       d:1200, intent:'수선 서비스 문의', conf:93, route:'FAQ 자동 응대', node:'faq',
+       related:['부티크 예약','매장 위치 안내','교환·반품 방법'],
+       isClosing:true, actionBtns:['상담원 연결','상담 종료']},
+      {r:'csat', d:700, node:'csat'},
+    ]
+  },
+
+  '결제 수단': {
+    label: 'FAQ — 결제 수단',
+    userMsg: '샤넬에서 사용 가능한 결제 수단이 궁금해요.',
+    steps: [
+      {r:'sys', t:'고객이 FAQ 키워드 "결제 수단"으로 연결되었습니다.', d:300, node:'start'},
+      {r:'ai',  t:'안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?',
+       d:600, intent:'인사/진입', conf:99, route:'자동 응대', node:'kw',
+       sf:{nm:'고객', tier:'—', buy:'—'}},
+      {r:'usr', t:'샤넬에서 사용 가능한 결제 수단이 궁금해요.', d:800, node:'nlu'},
+      {r:'typ', d:400, node:'faq'},
+      {r:'ai',  t:'채널별 결제 수단을 안내드립니다.\n\n서울 플래그십·부티크 오프라인\n· 신용카드, 현금\n· 삼성페이, 위챗, 알리페이\n\n뷰티 공식 온라인 스토어\n· 신용카드 (국내외)\n· 실시간 계좌이체, 가상계좌\n· 휴대폰 결제\n· 네이버페이, 카카오페이\n\n기프트 카드는 오프라인 부티크에서만 사용 가능합니다.',
+       d:1100, intent:'결제 수단 문의', conf:96, route:'FAQ 자동 응대', node:'faq',
+       related:['세금 환급','배송 안내','온라인 구매 방법'],
+       isClosing:true, actionBtns:['상담원 연결','상담 종료']},
+      {r:'csat', d:700, node:'csat'},
+    ]
+  },
+
+  '배송 안내': {
+    label: 'FAQ — 배송 안내',
+    userMsg: '온라인 주문 배송은 얼마나 걸리나요?',
+    steps: [
+      {r:'sys', t:'고객이 FAQ 키워드 "배송 안내"로 연결되었습니다.', d:300, node:'start'},
+      {r:'ai',  t:'안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?',
+       d:600, intent:'인사/진입', conf:99, route:'자동 응대', node:'kw',
+       sf:{nm:'고객', tier:'—', buy:'—'}},
+      {r:'usr', t:'온라인 주문 배송은 얼마나 걸리나요?', d:800, node:'nlu'},
+      {r:'typ', d:400, node:'faq'},
+      {r:'ai',  t:'샤넬 뷰티 공식 온라인 스토어 배송 안내입니다.\n\n배송 기간\n· 결제 완료일로부터 영업일 기준 2~3일 이내\n· 도서·산간 지역은 추가 소요될 수 있습니다\n\n배송비\n· 5만원 이상 구매 시 무료 배송\n· 5만원 미만 시 2,500원 부과\n\n배송 지역: 도서·산간·제주 포함 국내 전 지역\n배송 현황은 마이 페이지에서 확인하실 수 있습니다.',
+       d:1100, intent:'배송 문의', conf:96, route:'FAQ 자동 응대', node:'faq',
+       related:['주문 취소·변경','환불 정책','결제 수단'],
+       isClosing:true, actionBtns:['상담원 연결','상담 종료']},
+      {r:'csat', d:700, node:'csat'},
+    ]
+  },
+
+  '립스틱 지속': {
+    label: 'FAQ — 립스틱 지속',
+    userMsg: '샤넬 립스틱을 오래 유지하는 방법이 있나요?',
+    steps: [
+      {r:'sys', t:'고객이 FAQ 키워드 "립스틱 지속"으로 연결되었습니다.', d:300, node:'start'},
+      {r:'ai',  t:'안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?',
+       d:600, intent:'인사/진입', conf:99, route:'자동 응대', node:'kw',
+       sf:{nm:'고객', tier:'—', buy:'—'}},
+      {r:'usr', t:'샤넬 립스틱을 오래 유지하는 방법이 있나요?', d:800, node:'nlu'},
+      {r:'typ', d:400, node:'faq'},
+      {r:'ai',  t:'립스틱 지속력을 높이는 방법을 안내드립니다.\n\n1. 립밤으로 입술을 촉촉하게 정돈\n2. 립 프라이머 사용으로 지속력 강화\n3. 립 라이너로 입술 라인 먼저 그리기\n4. 립스틱 도포 후 티슈로 한 번 찍어내기\n5. 파우더를 살짝 덧바르면 더욱 오래 유지\n\n매장에서 뷰티 어드바이저의 맞춤 상담을 통해 피부 타입에 맞는 제품 추천도 받아보세요.',
+       d:1100, intent:'립스틱 사용법 문의', conf:92, route:'FAQ 자동 응대', node:'faq',
+       related:['파운데이션 선택','이브닝 메이크업','부티크 예약'],
+       isClosing:true, actionBtns:['상담원 연결','상담 종료']},
+      {r:'csat', d:700, node:'csat'},
+    ]
+  },
+
+  '향수 보관': {
+    label: 'FAQ — 향수 보관',
+    userMsg: '샤넬 향수를 오래 보관하는 방법이 있나요?',
+    steps: [
+      {r:'sys', t:'고객이 FAQ 키워드 "향수 보관"으로 연결되었습니다.', d:300, node:'start'},
+      {r:'ai',  t:'안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?',
+       d:600, intent:'인사/진입', conf:99, route:'자동 응대', node:'kw',
+       sf:{nm:'고객', tier:'—', buy:'—'}},
+      {r:'usr', t:'샤넬 향수를 오래 보관하는 방법이 있나요?', d:800, node:'nlu'},
+      {r:'typ', d:400, node:'faq'},
+      {r:'ai',  t:'샤넬 향수 장기 보관 방법을 안내드립니다.\n\n· 병을 단단히 밀봉하고 원래 포장 상태로 보관\n· 직사광선 피하기 (빛에 의한 향 변질 방지)\n· 고온·습기 주의 (욕실, 차 안 보관 금지)\n· 향수는 맥박이 뛰는 곳에 뿌리면 향이 더 잘 발산됩니다\n  (손목, 목덜미, 귀 뒤, 무릎 뒤)\n\n뿌린 후 문지르지 마세요. 향 분자가 파괴되어 향이 변질될 수 있습니다.',
+       d:1100, intent:'향수 보관 문의', conf:93, route:'FAQ 자동 응대', node:'faq',
+       related:['향수 용량 안내','향수 사용법','향수 추천 상담'],
+       isClosing:true, actionBtns:['상담원 연결','상담 종료']},
+      {r:'csat', d:700, node:'csat'},
+    ]
+  },
+
+  '시계 방수': {
+    label: 'FAQ — 시계 방수',
+    userMsg: '샤넬 시계는 방수가 되나요?',
+    steps: [
+      {r:'sys', t:'고객이 FAQ 키워드 "시계 방수"로 연결되었습니다.', d:300, node:'start'},
+      {r:'ai',  t:'안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?',
+       d:600, intent:'인사/진입', conf:99, route:'자동 응대', node:'kw',
+       sf:{nm:'고객', tier:'—', buy:'—'}},
+      {r:'usr', t:'샤넬 시계는 방수가 되나요?', d:800, node:'nlu'},
+      {r:'typ', d:400, node:'faq'},
+      {r:'ai',  t:'샤넬 시계 방수 기능에 대해 안내드립니다.\n\n· 샤넬 주얼리 워치는 생활 방수 기능만 갖추고 있습니다\n· 완전히 물에 잠기는 상황은 피해 주세요\n· 먼지, 빗물, 물방울 정도는 손상되지 않습니다\n\n주의 사항\n· 건식·습식 사우나, 샤워실, 욕실에서 착용 금지\n· 방수 기능용 씰은 최적 상태 유지를 위해 2년마다 교체 권장\n· 샤넬 공방 서비스 시마다 방수 기능 테스트 진행\n\n시계 서비스는 샤넬 워치 부티크 방문을 권장드립니다.',
+       d:1200, intent:'시계 방수 문의', conf:94, route:'FAQ 자동 응대', node:'faq',
+       related:['시계 수선 서비스','부티크 예약','결제 수단'],
+       isClosing:true, actionBtns:['상담원 연결','상담 종료']},
+      {r:'csat', d:700, node:'csat'},
+    ]
+  },
+
+  '영업 시간 안내': {
+    label: 'FAQ — 영업 시간 안내',
+    userMsg: '샤넬 부티크 영업 시간이 궁금해요.',
+    steps: [
+      {r:'sys', t:'고객이 "영업 시간 안내"로 연결되었습니다.', d:300, node:'start'},
+      {r:'ai',  t:'안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?',
+       d:600, intent:'인사/진입', conf:99, route:'자동 응대', node:'kw', sf:{nm:'고객', tier:'—', buy:'—'}},
+      {r:'usr', t:'샤넬 부티크 영업 시간이 궁금해요.', d:800, node:'nlu'},
+      {r:'typ', d:400, node:'faq'},
+      {r:'ai',  t:'샤넬 고객 센터 및 부티크 운영 안내드립니다.\n\n고객 센터 운영 시간\n· 오전 10시 ~ 오후 7시\n· 주말 및 공휴일 제외\n\n부티크 영업 시간은 매장마다 상이합니다.\n방문 전 아래 연락처로 확인하시거나 chanel.com에서 확인해 주세요.\n\n고객 센터 전화\n· 패션: 080-805-9628\n· 뷰티: 080-805-9638\n· 이메일: customer.service@chanel.co.kr',
+       d:1000, intent:'영업 시간 문의', conf:95, route:'FAQ 자동 응대', node:'faq',
+       related:['매장 위치 안내','부티크 예약','고객 센터 연락처'],
+       isClosing:true, actionBtns:['상담원 연결','상담 종료']},
+      {r:'csat', d:700, node:'csat'},
+    ]
+  },
+
+  '주차 안내': {
+    label: 'FAQ — 주차 안내',
+    userMsg: '샤넬 부티크 주차 안내가 궁금해요.',
+    steps: [
+      {r:'sys', t:'고객이 "주차 안내"로 연결되었습니다.', d:300, node:'start'},
+      {r:'ai',  t:'안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?',
+       d:600, intent:'인사/진입', conf:99, route:'자동 응대', node:'kw', sf:{nm:'고객', tier:'—', buy:'—'}},
+      {r:'usr', t:'샤넬 부티크 주차 안내가 궁금해요.', d:800, node:'nlu'},
+      {r:'typ', d:400, node:'faq'},
+      {r:'ai',  t:'부티크별 주차 안내드립니다.\n\n청담 메종\n· 건물 내 주차 가능 (유료)\n· 구매 금액에 따라 주차 할인 적용\n\n롯데 에비뉴엘 잠실\n· 롯데월드몰 주차장 이용\n· 백화점 구매 시 주차 할인 가능\n\n신세계 강남\n· 신세계 백화점 주차장 이용\n· 구매 시 주차 검증 가능\n\n자세한 주차 할인 조건은 방문 매장에 문의해 주세요.\n전화(패션): 080-805-9628',
+       d:1100, intent:'주차 안내 문의', conf:88, route:'FAQ 자동 응대', node:'faq',
+       related:['매장 위치 안내','영업 시간 안내','부티크 예약'],
+       isClosing:true, actionBtns:['상담원 연결','상담 종료']},
+      {r:'csat', d:700, node:'csat'},
+    ]
+  },
+
+  '온라인 구매 방법': {
+    label: 'FAQ — 온라인 구매 방법',
+    userMsg: '샤넬 온라인 스토어에서 구매하는 방법을 알고 싶어요.',
+    steps: [
+      {r:'sys', t:'고객이 "온라인 구매 방법"으로 연결되었습니다.', d:300, node:'start'},
+      {r:'ai',  t:'안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?',
+       d:600, intent:'인사/진입', conf:99, route:'자동 응대', node:'kw', sf:{nm:'고객', tier:'—', buy:'—'}},
+      {r:'usr', t:'샤넬 온라인 스토어에서 구매하는 방법을 알고 싶어요.', d:800, node:'nlu'},
+      {r:'typ', d:400, node:'faq'},
+      {r:'ai',  t:'샤넬 뷰티 공식 온라인 스토어 구매 방법 안내드립니다.\n\n구매 절차\n1) 원하는 제품 클릭\n2) 상품 상세 페이지에서 수량 설정\n3) 장바구니에 담기\n4) 상단 장바구니 아이콘 클릭\n5) 주문 정보 입력 후 결제\n\n주문당 동일 제품 최대 3개까지 구매 가능합니다.\n비회원 구매도 가능하며, 회원 가입 시 다양한 멤버십 혜택을 받으실 수 있습니다.',
+       d:1100, intent:'온라인 구매 문의', conf:94, route:'FAQ 자동 응대', node:'faq',
+       related:['결제 수단','배송 안내','교환·반품'],
+       isClosing:true, actionBtns:['상담원 연결','상담 종료']},
+      {r:'csat', d:700, node:'csat'},
+    ]
+  },
+
+  '고객 센터 연락처': {
+    label: 'FAQ — 고객 센터 연락처',
+    userMsg: '샤넬 고객 센터 연락처를 알고 싶어요.',
+    steps: [
+      {r:'sys', t:'고객이 "고객 센터 연락처"로 연결되었습니다.', d:300, node:'start'},
+      {r:'ai',  t:'안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?',
+       d:600, intent:'인사/진입', conf:99, route:'자동 응대', node:'kw', sf:{nm:'고객', tier:'—', buy:'—'}},
+      {r:'usr', t:'샤넬 고객 센터 연락처를 알고 싶어요.', d:800, node:'nlu'},
+      {r:'typ', d:400, node:'faq'},
+      {r:'ai',  t:'샤넬 고객 센터 연락처 안내드립니다.\n\n운영 시간: 오전 10시 ~ 오후 7시 (주말·공휴일 제외)\n이메일: customer.service@chanel.co.kr\n\n전화 문의\n· 패션: 080-805-9628\n· 뷰티: 080-805-9638\n\n카카오 채팅 상담 및 1:1 문의도 이용 가능합니다.',
+       d:1000, intent:'고객 센터 문의', conf:99, route:'FAQ 자동 응대', node:'faq',
+       related:['부티크 예약','매장 위치 안내','영업 시간 안내'],
+       isClosing:true, actionBtns:['상담원 연결','상담 종료']},
+      {r:'csat', d:700, node:'csat'},
+    ]
+  },
+
+  '주문 취소·변경': {
+    label: 'FAQ — 주문 취소·변경',
+    userMsg: '주문한 제품을 취소하거나 변경하고 싶어요.',
+    steps: [
+      {r:'sys', t:'고객이 "주문 취소·변경"으로 연결되었습니다.', d:300, node:'start'},
+      {r:'ai',  t:'안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?',
+       d:600, intent:'인사/진입', conf:99, route:'자동 응대', node:'kw', sf:{nm:'고객', tier:'—', buy:'—'}},
+      {r:'usr', t:'주문한 제품을 취소하거나 변경하고 싶어요.', d:800, node:'nlu'},
+      {r:'typ', d:400, node:'faq'},
+      {r:'ai',  t:'주문 취소 및 변경 안내드립니다.\n\n취소·변경 가능 조건\n· 결제 완료 상태에서만 가능\n· 배송 준비 중 단계부터는 취소·변경 불가\n\n방법\n· 마이 페이지에서 직접 취소·변경\n· 고객 센터 문의 (080-805-9638)\n\n이미 배송이 시작된 경우 수령 후 반품 절차로 진행해 주세요.',
+       d:1100, intent:'주문 취소·변경 문의', conf:94, route:'FAQ 자동 응대', node:'faq',
+       related:['교환·반품','환불 정책','배송 안내'],
+       isClosing:true, actionBtns:['상담원 연결','상담 종료']},
+      {r:'csat', d:700, node:'csat'},
+    ]
+  },
+
+  '향수 사용법': {
+    label: 'FAQ — 향수 사용법',
+    userMsg: '샤넬 향수를 잘 사용하는 방법이 궁금해요.',
+    steps: [
+      {r:'sys', t:'고객이 "향수 사용법"으로 연결되었습니다.', d:300, node:'start'},
+      {r:'ai',  t:'안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?',
+       d:600, intent:'인사/진입', conf:99, route:'자동 응대', node:'kw', sf:{nm:'고객', tier:'—', buy:'—'}},
+      {r:'usr', t:'샤넬 향수를 잘 사용하는 방법이 궁금해요.', d:800, node:'nlu'},
+      {r:'typ', d:400, node:'faq'},
+      {r:'ai',  t:'샤넬 향수 사용법을 안내드립니다.\n\n뿌리는 위치\n맥박이 뛰는 곳에 뿌리면 향이 더 잘 발산됩니다.\n· 손목, 목덜미, 귀 뒤, 무릎 뒤\n\n사용 팁\n· 공중에 뿌린 후 그 아래를 지나가면 은은하게 향을 입힐 수 있습니다\n· 뿌린 후 문지르지 마세요 — 향 분자가 파괴됩니다\n· 옷에 직접 뿌리면 얼룩이 생길 수 있습니다\n\n향수는 탑·미들·베이스 노트 순으로 변화하므로, 처음 향과 다른 향이 나는 것은 자연스러운 현상입니다.',
+       d:1100, intent:'향수 사용법 문의', conf:93, route:'FAQ 자동 응대', node:'faq',
+       related:['향수 보관','향수 용량','향수 추천 상담'],
+       isClosing:true, actionBtns:['상담원 연결','상담 종료']},
+      {r:'csat', d:700, node:'csat'},
+    ]
+  },
+
+  '향수 추천 상담': {
+    label: 'FAQ — 향수 추천 상담',
+    userMsg: '나에게 맞는 샤넬 향수를 추천받고 싶어요.',
+    steps: [
+      {r:'sys', t:'고객이 "향수 추천 상담"으로 연결되었습니다.', d:300, node:'start'},
+      {r:'ai',  t:'안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?',
+       d:600, intent:'인사/진입', conf:99, route:'자동 응대', node:'kw', sf:{nm:'고객', tier:'—', buy:'—'}},
+      {r:'usr', t:'나에게 맞는 샤넬 향수를 추천받고 싶어요.', d:800, node:'nlu'},
+      {r:'typ', d:500, node:'slot'},
+      {r:'ai',  t:'향수 선택은 개인의 경험, 기억, 감정, 라이프스타일과 깊이 연결되어 있습니다.\n\n맞춤 추천을 위해 아래 방법을 권장드립니다.\n\n· 가까운 샤넬 부티크 방문 — 뷰티 어드바이저가 피부 타입과 선호도에 맞는 향수를 직접 테스트해 드립니다\n· chanel.com 향수 카테고리 — 각 향수의 노트와 특성 확인 가능\n\n맞춤 상담을 원하신다면 전담 상담원과 연결해 드리겠습니다.',
+       d:1200, intent:'향수 추천 문의', conf:82, route:'상담원 연결 제안', node:'faq',
+       related:['향수 용량','향수 사용법','부티크 예약'],
+       isClosing:true, actionBtns:['상담원 연결','상담 종료']},
+      {r:'csat', d:700, node:'csat'},
+    ]
+  },
+
+  '파운데이션 선택': {
+    label: 'FAQ — 파운데이션 선택',
+    userMsg: '샤넬 파운데이션 선택 방법을 알고 싶어요.',
+    steps: [
+      {r:'sys', t:'고객이 "파운데이션 선택"으로 연결되었습니다.', d:300, node:'start'},
+      {r:'ai',  t:'안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?',
+       d:600, intent:'인사/진입', conf:99, route:'자동 응대', node:'kw', sf:{nm:'고객', tier:'—', buy:'—'}},
+      {r:'usr', t:'샤넬 파운데이션 선택 방법을 알고 싶어요.', d:800, node:'nlu'},
+      {r:'typ', d:400, node:'faq'},
+      {r:'ai',  t:'샤넬 파운데이션 선택 가이드 안내드립니다.\n\n선택 기준\n· 피부 톤에 맞는 색상 선택이 가장 중요합니다\n· 피부 타입에 맞는 제형 선택\n  - 건성 피부: 보습·광채 제형\n  - 지성 피부: 매트·롱래스팅 제형\n  - 복합성 피부: 세미매트 제형\n\n사용 팁\n손가락, 브러쉬, 스펀지를 사용해 얼굴 중앙에서 바깥으로 부드럽게 펴 바르세요.\n소량씩 여러 번 덧바르면 더욱 자연스럽습니다.\n\n매장 방문 시 뷰티 어드바이저에게 직접 테스트 받아보시길 권장합니다.',
+       d:1100, intent:'파운데이션 선택 문의', conf:91, route:'FAQ 자동 응대', node:'faq',
+       related:['립스틱 지속','이브닝 메이크업','부티크 예약'],
+       isClosing:true, actionBtns:['상담원 연결','상담 종료']},
+      {r:'csat', d:700, node:'csat'},
+    ]
+  },
+
+  '이브닝 메이크업': {
+    label: 'FAQ — 이브닝 메이크업',
+    userMsg: '이브닝 룩을 위한 메이크업 노하우가 궁금해요.',
+    steps: [
+      {r:'sys', t:'고객이 "이브닝 메이크업"으로 연결되었습니다.', d:300, node:'start'},
+      {r:'ai',  t:'안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?',
+       d:600, intent:'인사/진입', conf:99, route:'자동 응대', node:'kw', sf:{nm:'고객', tier:'—', buy:'—'}},
+      {r:'usr', t:'이브닝 룩을 위한 메이크업 노하우가 궁금해요.', d:800, node:'nlu'},
+      {r:'typ', d:400, node:'faq'},
+      {r:'ai',  t:'샤넬 이브닝 메이크업 노하우를 안내드립니다.\n\n베이스\n· 밝은 쉐이드의 파운데이션으로 광채 있는 피부 연출\n· 저녁 외출 전 유분기 걱정된다면 얼음으로 빠르게 닦아낸 후 페이퍼타월로 건조 — 메이크업 지속력과 광채 향상\n\n포인트 메이크업\n· 아이 메이크업 강조 + 누드 립 → 시크한 이브닝 룩\n· 강렬한 레드 립 + 심플한 아이 메이크업 → 클래식 이브닝 룩\n\n맞춤 상담은 가까운 샤넬 매장에서 뷰티 어드바이저에게 받아보세요.',
+       d:1100, intent:'이브닝 메이크업 문의', conf:90, route:'FAQ 자동 응대', node:'faq',
+       related:['파운데이션 선택','립스틱 지속','부티크 예약'],
+       isClosing:true, actionBtns:['상담원 연결','상담 종료']},
+      {r:'csat', d:700, node:'csat'},
+    ]
+  },
+
+  '코코 크러시 가격': {
+    label: 'FAQ — 코코 크러시 가격',
+    userMsg: '코코 크러시 제품 가격이 궁금해요.',
+    steps: [
+      {r:'sys', t:'고객이 "코코 크러시 가격"으로 연결되었습니다.', d:300, node:'start'},
+      {r:'ai',  t:'안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?',
+       d:600, intent:'인사/진입', conf:99, route:'자동 응대', node:'kw', sf:{nm:'고객', tier:'—', buy:'—'}},
+      {r:'usr', t:'코코 크러시 제품 가격이 궁금해요.', d:800, node:'nlu'},
+      {r:'typ', d:400, node:'faq'},
+      {r:'ai',  t:'코코 크러시 컬렉션 가격 안내드립니다.\n\n코코 크러시 브레이슬릿\n· 18K 베이지 골드 / 화이트 골드 / 로즈 골드\n· 가격대: KRW 2,850,000~\n\n정확한 가격 및 현재 판매 중인 라인은 매장마다 상이할 수 있습니다.\n최신 가격은 chanel.com에서 확인하시거나 부티크에 문의해 주세요.\n\n전화(패션): 080-805-9628',
+       d:1100, intent:'가격 문의', conf:88, route:'FAQ 자동 응대', node:'faq',
+       related:['재고 확인','매장 위치 안내','부티크 예약'],
+       isClosing:true, actionBtns:['상담원 연결','상담 종료']},
+      {r:'csat', d:700, node:'csat'},
+    ]
+  },
+
+  '신제품 출시 일정': {
+    label: 'FAQ — 신제품 출시 일정',
+    userMsg: '샤넬 신제품 출시 일정이 궁금해요.',
+    steps: [
+      {r:'sys', t:'고객이 "신제품 출시 일정"으로 연결되었습니다.', d:300, node:'start'},
+      {r:'ai',  t:'안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?',
+       d:600, intent:'인사/진입', conf:99, route:'자동 응대', node:'kw', sf:{nm:'고객', tier:'—', buy:'—'}},
+      {r:'usr', t:'샤넬 신제품 출시 일정이 궁금해요.', d:800, node:'nlu'},
+      {r:'typ', d:400, node:'faq'},
+      {r:'ai',  t:'샤넬 컬렉션 출시 일정을 안내드립니다.\n\n패션 컬렉션 연간 일정\n· 봄/여름 프리-컬렉션: 2월 출시\n· 봄/여름 컬렉션: 3월 출시\n· 공방 컬렉션: 6월 출시\n· 가을/겨울 프리-컬렉션: 7월 출시\n· 가을/겨울 컬렉션: 9월 출시\n· 크루즈 컬렉션: 11월 출시\n\n뷰티·향수 신제품은 시즌마다 비정기 출시됩니다.\n최신 소식은 chanel.com 또는 공식 SNS에서 확인하시거나 뉴스레터를 구독해 주세요.',
+       d:1100, intent:'신제품 출시 문의', conf:92, route:'FAQ 자동 응대', node:'faq',
+       related:['재고 확인','부티크 예약','고객 센터 연락처'],
+       isClosing:true, actionBtns:['상담원 연결','상담 종료']},
+      {r:'csat', d:700, node:'csat'},
+    ]
+  },
+};
+
 function pickKW(btn, kw) {
-  /* highlight selected keyword */
-  document.querySelectorAll('.kw-btn').forEach(b => b.style.borderColor = '');
+  /* 버튼 하이라이트 */
+  document.querySelectorAll('.kw-btn').forEach(b => {
+    b.style.borderColor = ''; b.style.color = '';
+  });
   btn.style.borderColor = 'var(--color-accent)';
   btn.style.color = 'var(--color-accent)';
-  /* inject as user message */
-  const C = document.getElementById('chatMsgs');
-  const d = mkEl('div','msg user');
-  d.innerHTML = `<div class="msg-avi usr" aria-hidden="true">U</div>
-    <div class="msg-body">
-      <div class="msg-bubble">${esc(kw)} 관련 안내해 주세요</div>
-      <span class="msg-meta">${now()}</span>
-    </div>`;
-  C.appendChild(d);
-  msgN++; turnN++; updateKPIs(); scrollBtm();
-  addLog(`FAQ 키워드 선택: "${kw}"`);
-  const s = SCENES[curScene].steps;
-  if(step < s.length) setTimeout(playNext, 700);
-  else setTimeout(()=>appendAI(`"${kw}" 관련 문의를 접수하였습니다. 자세한 안내를 드리겠습니다.`), 700);
-  setTimeout(()=>{ btn.style.borderColor=''; btn.style.color=''; }, 2000);
+  setTimeout(() => { btn.style.borderColor=''; btn.style.color=''; }, 2000);
+
+  const scene = FAQ_SCENES[kw];
+  if (!scene) return;
+
+  /* 상태 초기화 */
+  stopAuto();
+  _fbSeq = 0; _agentConnected = false;
+  step = 0; msgN = 0; turnN = 0;
+  activateNode('start');
+  document.getElementById('chatMsgs').innerHTML = '';
+  resetState();
+
+  /* 시나리오 탭 선택 표시 해제 (FAQ 전용 시나리오임을 구분) */
+  document.querySelectorAll('.scene-btn').forEach(b => b.setAttribute('aria-selected','false'));
+  document.getElementById('chatSub').textContent = scene.label;
+  addLog('FAQ 키워드 시나리오: ' + kw);
+
+  /* 동적으로 FAQ 시나리오 주입 후 자동재생 */
+  const faqScene = { label: scene.label, steps: scene.steps };
+  SCENES[99] = faqScene;   /* 임시 슬롯에 주입 */
+  curScene = 99;
+  auto = true;
+  document.getElementById('autoBtn').textContent = '자동재생';
+  document.getElementById('autoBtn').setAttribute('aria-pressed','true');
+  playNext();
 }
 
 function pickRelated(kw) {
-  const C = document.getElementById('chatMsgs');
-  const d = mkEl('div','msg user');
-  d.innerHTML = `<div class="msg-avi usr" aria-hidden="true">U</div>
-    <div class="msg-body">
-      <div class="msg-bubble">${esc(kw)} 알려주세요</div>
-      <span class="msg-meta">${now()}</span>
-    </div>`;
-  C.appendChild(d);
-  msgN++; turnN++; updateKPIs(); scrollBtm();
-  addLog(`연관 문의 선택: "${kw}"`);
-  setTimeout(()=>appendAI(`"${kw}" 관련 안내드립니다. 추가로 궁금하신 사항이 있으시면 말씀해 주세요.`), 800);
+  /* 별칭 → FAQ_SCENES 키 매핑 */
+  const ALIAS = {
+    'VIP 서비스 문의':  'VIP 서비스',
+    '교환·반품 방법':   '교환·반품',
+    '교환·반품 정책':   '교환·반품',
+    '매장 위치 안내':   '매장 위치',
+    '부티크 예약 방법': '부티크 예약',
+    '온라인 결제 수단': '결제 수단',
+    '온라인 구매 정책': '온라인 구매 방법',
+    '향수 보관 방법':   '향수 보관',
+    '향수 용량 안내':   '향수 용량',
+    '시계 수선 서비스': '수선 서비스',
+    '주문 취소 방법':   '주문 취소·변경',
+  };
+
+  /* 키 탐색: 별칭 → 정확 일치 → 부분 일치 */
+  const keys = Object.keys(FAQ_SCENES);
+  const aliasKey   = ALIAS[kw];
+  const exactKey   = !aliasKey && keys.find(k => k === kw);
+  const partialKey = !aliasKey && !exactKey && keys.find(k =>
+    kw.includes(k) || k.includes(kw) ||
+    kw.replace(/\s/g,'').includes(k.replace(/\s/g,''))
+  );
+  const matchedKey = aliasKey || exactKey || partialKey;
+
+  if (matchedKey) {
+    /* FAQ 시나리오 자동재생 — 인사말(sys+ai인사) 건너뛰고 usr부터 */
+    const scene = FAQ_SCENES[matchedKey];
+    stopAuto();
+    _fbSeq = 0; _agentConnected = false;
+
+    /* 현재 채팅 유지 + 구분선만 추가 */
+    const C = document.getElementById('chatMsgs');
+    const sep = mkEl('div','msg system');
+    sep.innerHTML = `<div class="msg-bubble">${esc(matchedKey)}${matchedKey.endsWith('안내') ? '' : ' 안내'}</div>`;
+    C.appendChild(sep); scrollBtm();
+
+    /* 상태·패널 레이블 업데이트 */
+    document.querySelectorAll('.scene-btn').forEach(b => b.setAttribute('aria-selected','false'));
+    document.getElementById('chatSub').textContent = scene.label;
+    addLog('연관 문의 FAQ: ' + matchedKey);
+
+    /* sys·ai인사 스텝(0,1) 건너뛰고 usr(2)부터 주입 */
+    const faqScene = { label: scene.label, steps: scene.steps.slice(2) };
+    SCENES[99] = faqScene;
+    curScene = 99; step = 0; msgN = 0; turnN = 0;
+    auto = true;
+    document.getElementById('autoBtn').textContent = '자동재생';
+    document.getElementById('autoBtn').setAttribute('aria-pressed','true');
+    playNext();
+  } else {
+    /* fallback — 매칭 없을 때 단순 응답 */
+    const C = document.getElementById('chatMsgs');
+    const d = mkEl('div','msg user');
+    d.innerHTML = `<div class="msg-avi usr" aria-hidden="true">U</div>
+      <div class="msg-body">
+        <div class="msg-bubble">${esc(kw)} 알려주세요</div>
+        <span class="msg-meta">${now()}</span>
+      </div>`;
+    C.appendChild(d);
+    msgN++; turnN++; updateKPIs(); scrollBtm();
+    addLog(`연관 문의 선택: "${kw}"`);
+    setTimeout(()=>appendAI(`"${kw}" 관련 안내드립니다. 추가로 궁금하신 사항이 있으시면 말씀해 주세요.`), 800);
+  }
 }
 
 function rateCsat(n) {
@@ -1873,15 +2388,13 @@ function connectAgent(btn) {
   /* 1. 대기 중 메시지 */
   const waitDiv = mkEl('div','msg system');
   waitDiv.id = '__agentWait';
-  waitDiv.innerHTML = `<div class="msg-bubble" role="status">
-    <div class="agent-waiting">
+  waitDiv.innerHTML = `<div class="agent-waiting">
       <div class="waiting-spinner" aria-hidden="true"></div>
       <div>
         <div class="waiting-text">상담원 연결 중…</div>
         <div class="waiting-sub">대화 내용 및 고객 정보를 전달하고 있습니다</div>
       </div>
-    </div>
-  </div>`;
+    </div>`;
   C.appendChild(waitDiv); scrollBtm();
   setSyncPill('active');
 
@@ -1898,7 +2411,7 @@ function connectAgent(btn) {
 
     /* 시스템 메시지 */
     const sysDiv = mkEl('div','msg system');
-    sysDiv.innerHTML = `<div class="msg-bubble" role="status">[ Handover ] 대화 맥락 및 고객 정보가 상담원에게 전달되었습니다.</div>`;
+    sysDiv.innerHTML = `<div class="msg-bubble" role="status">고객 대화와 고객 정보가 상담원에게 전달되었습니다.</div>`;
     C.appendChild(sysDiv);
 
     /* 상담원 연결 카드 */
@@ -1953,7 +2466,7 @@ function connectAgentAuto() {
   /* 긴급 시스템 메시지 */
   const sysEmg = mkEl('div','msg system');
   sysEmg.innerHTML = `<div class="msg-bubble" role="status" style="border-color:var(--color-danger);color:var(--color-danger)">
-    [ 긴급 Handover ] 대화 맥락 즉시 전달 — 상담원 우선 배정
+    [ 긴급 Handover ] 상담원 우선 배정
   </div>`;
   C.appendChild(sysEmg);
   setSyncPill('active');
@@ -1961,15 +2474,13 @@ function connectAgentAuto() {
   /* 대기 스피너 */
   const waitDiv = mkEl('div','msg system');
   waitDiv.id = '__agentWait';
-  waitDiv.innerHTML = `<div class="msg-bubble" role="status">
-    <div class="agent-waiting">
+  waitDiv.innerHTML = `<div class="agent-waiting">
       <div class="waiting-spinner" aria-hidden="true"></div>
       <div>
         <div class="waiting-text">상담원 긴급 연결 중…</div>
         <div class="waiting-sub">대화 내용 및 고객 정보를 전달하고 있습니다</div>
       </div>
-    </div>
-  </div>`;
+    </div>`;
   C.appendChild(waitDiv);
   scrollBtm();
 
@@ -1986,7 +2497,7 @@ function connectAgentAuto() {
     activateNode('sf');
 
     const sysDiv = mkEl('div','msg system');
-    sysDiv.innerHTML = `<div class="msg-bubble" role="status">[ Handover ] 대화 맥락 및 고객 정보가 상담원에게 전달되었습니다.</div>`;
+    sysDiv.innerHTML = `<div class="msg-bubble" role="status">고객 대화와 고객 정보가 상담원에게 전달되었습니다.</div>`;
     C.appendChild(sysDiv);
 
     const agentDiv = mkEl('div','msg ai');
