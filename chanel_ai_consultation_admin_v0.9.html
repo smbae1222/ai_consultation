@@ -211,12 +211,25 @@ textarea.finput{resize:vertical}
 
 /* ── TOGGLE ── */
 .toggle-wrap{display:flex;align-items:center;gap:8px}
-.toggle{position:relative;width:32px;height:16px;cursor:pointer}
+.toggle{position:relative;width:40px;height:22px;cursor:pointer;display:inline-block;flex-shrink:0}
 .toggle input{opacity:0;width:0;height:0;position:absolute}
-.toggle-track{position:absolute;inset:0;background:var(--border2);border-radius:8px;transition:background var(--dur)}
-.toggle-thumb{position:absolute;width:12px;height:12px;top:2px;left:2px;background:var(--t3);border-radius:50%;transition:all var(--dur)}
+.toggle-track{
+  position:absolute;inset:0;
+  background:#767676;
+  border-radius:11px;
+  transition:background var(--dur)
+}
+.toggle-thumb{
+  position:absolute;
+  width:16px;height:16px;
+  top:3px;left:3px;
+  background:#ffffff;
+  border-radius:50%;
+  box-shadow:0 1px 4px rgba(0,0,0,.3);
+  transition:all var(--dur)
+}
 .toggle input:checked ~ .toggle-track{background:var(--gold)}
-.toggle input:checked ~ .toggle-thumb{left:18px;background:var(--bg)}
+.toggle input:checked ~ .toggle-thumb{left:21px}
 .toggle-lbl{font-size:12px;color:var(--t2);font-weight:450}
 
 /* ── JOB ROW ── */
@@ -294,6 +307,78 @@ input[type=range]:focus{outline:none}
 .sum-preview{font-size:11px;color:var(--t3);max-width:200px;overflow:hidden;
   text-overflow:ellipsis;white-space:nowrap;letter-spacing:.01em;font-weight:450}
 .sum-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:1px}
+
+/* ── SEARCH RESULT CARDS ── */
+.result-card{
+  background:var(--bg1);
+  border:1px solid var(--border2);
+  margin-bottom:8px;
+  border-radius:4px;
+  overflow:hidden;
+}
+.result-hd{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;
+  background:var(--bg2);
+  border-bottom:1px solid var(--border);
+}
+.result-rank{
+  width:20px;height:20px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;flex-shrink:0;
+  background:var(--border2);color:var(--t2);
+}
+.result-src-text{
+  flex:1;font-size:11px;color:var(--gold);
+  font-family:monospace;font-weight:600;
+  letter-spacing:.02em;min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.result-score-wrap{
+  display:flex;align-items:center;gap:6px;flex-shrink:0;
+}
+.result-score-num{
+  font-size:12px;font-weight:700;font-family:monospace;min-width:32px;text-align:right;
+}
+.result-score-bar{
+  width:60px;height:3px;background:var(--border2);border-radius:2px;
+}
+.result-score-fill{
+  height:3px;border-radius:2px;
+  transition:width .6s cubic-bezier(.25,1,.5,1);
+}
+.result-body{
+  padding:10px 12px;
+  font-size:12px;line-height:19px;
+  color:var(--t2);letter-spacing:.01em;font-weight:450;
+  border-left:3px solid transparent;
+}
+.result-body.rank-1{border-left-color:var(--green)}
+.result-body.rank-2{border-left-color:var(--warn)}
+.result-body.rank-3{border-left-color:var(--border2)}
+
+/* ── PIPELINE FLOW DIAGRAM ── */
+.pipe-flow{display:flex;align-items:center;padding:24px 20px;overflow-x:auto;gap:0;min-height:130px}
+.pipe-flow::-webkit-scrollbar{height:4px}
+.pipe-flow::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.pf-node{flex-shrink:0;display:flex;flex-direction:column;align-items:center;width:108px}
+.pf-card{width:100%;border:2px solid var(--border2);border-radius:12px;padding:12px 10px;text-align:center;background:var(--bg1);cursor:pointer;transition:all var(--dur);position:relative}
+.pf-card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.pf-card.done{background:#f0f7f3;border-color:var(--green-b)}
+.pf-card.running{background:#fdf6ec;border-color:var(--gold-b);animation:pfpulse 1.8s ease-in-out infinite}
+.pf-card.waiting{background:var(--bg2);border-color:var(--border2);opacity:.65}
+@keyframes pfpulse{0%,100%{box-shadow:0 0 0 0 rgba(122,90,46,.18)}50%{box-shadow:0 0 0 6px rgba(122,90,46,0)}}
+.pf-ico{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 7px;font-size:12px;font-weight:700}
+.pf-ico.done{background:var(--green);color:#fff}
+.pf-ico.running{background:var(--gold);color:#fff}
+.pf-ico.waiting{background:var(--border2);color:var(--t3)}
+.pf-name{font-size:11px;font-weight:650;color:var(--t1);letter-spacing:.02em;margin-bottom:5px;line-height:1.3}
+.pf-status{font-size:10px;letter-spacing:.06em;font-weight:600;text-transform:uppercase}
+.pf-status.done{color:var(--green)}
+.pf-status.running{color:var(--gold)}
+.pf-status.waiting{color:var(--t3)}
+.pf-time{font-size:10px;color:var(--t3);margin-top:3px;font-family:monospace;font-weight:500}
+.pf-arrow{flex-shrink:0;display:flex;align-items:center;padding:0 4px;margin-top:-8px}
 </style>
 </head>
 <body>
@@ -971,18 +1056,32 @@ function renderPipeTab(i) {
   if(i === 0) {
     const stages = ['수집','전처리','청킹','임베딩','인덱스 구축','하이브리드 검색','답변 생성'];
     const stStats = [{done:42,avg:'0.2s',err:0},{done:41,avg:'1.4s',err:1},{done:41,avg:'2.1s',err:0},{done:40,avg:'8.3s',err:1},{done:40,avg:'1.1s',err:0},{done:40,avg:'0.3s',err:0},{done:39,avg:'1.8s',err:1}];
+    const stState = stages.map((_,i) => i===1?'running':i<5?'done':'waiting');
+    const stIco   = {'done':'✓','running':'⟳','waiting':'—'};
+    const stLbl   = {'done':'완료','running':'진행 중','waiting':'대기'};
     c.innerHTML = `
       <div style="padding:14px 16px;border-bottom:1px solid var(--border)">
-        <div style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--t3);margin-bottom:10px">7단계 파이프라인 — 실시간 현황 (폴링 5s)</div>
-        <div class="pipe-wrap">
-          ${stages.map((s,i) => `
-            <div class="pipe-step">
-              <div class="pipe-box ${i===1?'running':i<5?'done':''}" onclick="showStageDetail(${i})">
-                <div class="pipe-lbl">${s}</div>
-                <div class="pipe-sub">${i===1?'진행 중':i<5?'완료':'대기'}</div>
+        <div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);margin-bottom:16px;font-weight:600">7단계 파이프라인 — 실시간 현황 (폴링 5s)</div>
+        <div class="pipe-flow">
+          ${stages.map((s,i) => {
+            const st = stState[i];
+            const arrowColor = i < 2 ? 'var(--green)' : i === 2 ? 'var(--gold)' : 'var(--border2)';
+            return `
+            <div class="pf-node">
+              <div class="pf-card ${st}" onclick="showStageDetail(${i})">
+                <div class="pf-ico ${st}">${stIco[st]}</div>
+                <div class="pf-name">${s}</div>
+                <div class="pf-status ${st}">${stLbl[st]}</div>
+                <div class="pf-time">${st!=='waiting'?stStats[i].avg:'—'}</div>
               </div>
             </div>
-            ${i<stages.length-1?'<div class="pipe-arr">→</div>':''}`).join('')}
+            ${i<stages.length-1?`
+            <div class="pf-arrow">
+              <svg width="28" height="16" viewBox="0 0 28 16" fill="none">
+                <path d="M2 8 H22 M18 3 L24 8 L18 13" stroke="${arrowColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>`:''}`;
+          }).join('')}
         </div>
       </div>
       <div style="padding:14px 16px">
@@ -1369,14 +1468,25 @@ function runSearch() {
           <div style="font-size:10px;color:var(--t4);margin-top:6px">인용: faq_master_v3.2.pdf · boutique_locations.csv</div>
         </div>
       </div>
-      <div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);margin-bottom:6px">검색 결과 청크 (${results.length}건)</div>
-      ${results.map(r => `<div class="result-card">
-        <div class="result-hd">
-          <span style="font-size:11px;color:var(--t2)">${r.src}</span>
-          <span class="result-score" style="color:${r.score>=0.9?'var(--green)':r.score>=0.7?'var(--warn)':'var(--red)'}">${r.score.toFixed(2)}</span>
-        </div>
-        <div class="result-body">${r.txt}</div>
-      </div>`).join('')}`;
+      <div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);margin-bottom:8px;font-weight:600">검색 결과 청크 (${results.length}건)</div>
+      ${results.map((r,ri) => {
+        const scoreColor = r.score>=0.9?'var(--green)':r.score>=0.7?'var(--warn)':'var(--red)';
+        const rankClass  = ri===0?'rank-1':ri===1?'rank-2':'rank-3';
+        const fillW      = Math.round(r.score*100);
+        return `<div class="result-card">
+          <div class="result-hd">
+            <div class="result-rank" style="background:${scoreColor};color:#fff">${ri+1}</div>
+            <span class="result-src-text">${r.src}</span>
+            <div class="result-score-wrap">
+              <div class="result-score-bar">
+                <div class="result-score-fill" style="width:${fillW}%;background:${scoreColor}"></div>
+              </div>
+              <span class="result-score-num" style="color:${scoreColor}">${r.score.toFixed(2)}</span>
+            </div>
+          </div>
+          <div class="result-body ${rankClass}">${r.txt}</div>
+        </div>`;
+      }).join('')}`;
     if(timEl) {
       const timings = {쿼리벡터화:'42ms',검색:'284ms',재랭킹:'—',생성:'512ms',전체:'838ms'};
       timEl.style.display = 'flex';
@@ -2307,7 +2417,7 @@ function renderBLRows() {
     <td class="w" style="font-family:monospace">${b.word}</td>
     <td><span class="tag ${b.cat.includes('PII')?'warn':b.cat.includes('경쟁')?'blue':'red'}">${b.cat}</span></td>
     <td style="color:var(--t2)">${b.scope}</td>
-    <td><label class="toggle"><input type="checkbox" ${b.active?'checked':''} onchange="toggleBL('${b.id}',this.checked)"><div class="toggle-track"></div><div class="toggle-thumb"></div></label></td>
+    <td style="text-align:center"><label class="toggle"><input type="checkbox" ${b.active?'checked':''} onchange="toggleBL('${b.id}',this.checked)"><div class="toggle-track"></div><div class="toggle-thumb"></div></label></td>
     <td><button class="btn sm red" onclick="deleteBL('${b.id}')">삭제</button></td>
   </tr>`).join('');
 }
@@ -2325,7 +2435,7 @@ function renderGRRows() {
     <td class="w">${g.keyword}</td>
     <td><span class="tag warn">${g.type}</span></td>
     <td style="font-size:12px;color:var(--t2);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${g.response}</td>
-    <td><label class="toggle"><input type="checkbox" ${g.active?'checked':''} onchange="toggleGR('${g.id}',this.checked)"><div class="toggle-track"></div><div class="toggle-thumb"></div></label></td>
+    <td style="text-align:center"><label class="toggle"><input type="checkbox" ${g.active?'checked':''} onchange="toggleGR('${g.id}',this.checked)"><div class="toggle-track"></div><div class="toggle-thumb"></div></label></td>
     <td><button class="btn sm red" onclick="deleteGR('${g.id}')">삭제</button></td>
   </tr>`).join('');
 }
@@ -2398,7 +2508,7 @@ function renderWorkflowTab(i) {
             <div style="padding:8px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
               <div style="display:flex;align-items:center;gap:10px">
                 <span style="font-size:12px;color:var(--t1)">${p.name}</span>
-                <span class="tag ${p.active?'green':'gray'}">${p.active?'활성':'비활성'}</span>
+                <span class="tag ${p.active?'green':'gray'}" id="pipe-tag-${pi}">${p.active?'활성':'비활성'}</span>
                 <span style="font-family:monospace;font-size:10px;color:var(--t3)">${p.id}</span>
               </div>
               <label class="toggle"><input type="checkbox" ${p.active?'checked':''} onchange="togglePipe(${pi},this.checked)"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
@@ -2499,7 +2609,7 @@ function renderRRRows() {
     <td style="text-align:center;color:var(--gold);font-weight:500">${r.priority}</td>
     <td class="w">${r.condition}</td>
     <td style="color:var(--t2)">${r.action}</td>
-    <td><label class="toggle"><input type="checkbox" ${r.active?'checked':''} onchange="toggleRR('${r.id}',this.checked)"><div class="toggle-track"></div><div class="toggle-thumb"></div></label></td>
+    <td style="text-align:center"><label class="toggle"><input type="checkbox" ${r.active?'checked':''} onchange="toggleRR('${r.id}',this.checked)"><div class="toggle-track"></div><div class="toggle-thumb"></div></label></td>
     <td style="white-space:nowrap"><button class="btn sm" onclick="editRR('${r.id}')">편집</button><button class="btn sm red" style="margin-left:3px" onclick="deleteRR('${r.id}')">삭제</button></td>
   </tr>`).join('');
 }
@@ -2514,7 +2624,14 @@ function quickAddRR() {
   ROUTING_RULES.push({id:'RR-'+String(ROUTING_RULES.length+1).padStart(3,'0'),condition:cond,action:act,priority:pri,active:true});
   renderWorkflowTab(2);
 }
-function togglePipe(idx, v) { PIPELINES[idx].active=v; }
+function togglePipe(idx, v) {
+  PIPELINES[idx].active = v;
+  const tag = document.getElementById('pipe-tag-' + idx);
+  if (tag) {
+    tag.textContent = v ? '활성' : '비활성';
+    tag.className   = 'tag ' + (v ? 'green' : 'gray');
+  }
+}
 function updatePipeModel(idx, v) { PIPELINES[idx].model=v; }
 function reembedDoc(nm) { alert(`"${nm}" 재임베딩을 시작합니다. 완료 후 색인이 자동 갱신됩니다.`); }
 function injectWorkflow() {
