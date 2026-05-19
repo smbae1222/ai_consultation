@@ -17,14 +17,14 @@
   --font-size-md:   14px;
   --font-size-lg:   15px;
   --font-size-xl:   40px;
-  --font-weight-base: 400;
+  --font-weight-base: 450;
   --line-height-base: 21px;
 
   /* colour — light mode */
-  --color-text-primary:   #6b6b6b;
-  --color-text-secondary: #6b6b6b;
-  --color-text-tertiary:  #333333;
-  --color-text-inverse:   #999999;
+  --color-text-primary:   #4a4a4a;
+  --color-text-secondary: #4a4a4a;
+  --color-text-tertiary:  #222222;
+  --color-text-inverse:   #6e6e6e;
   --color-surface-base:   #ffffff;
   --color-surface-muted:  #111111;
   --color-surface-panel:  #f7f6f4;
@@ -45,15 +45,15 @@
   --motion-fast:    300ms;
 
   /* derived / extended — light mode */
-  --color-border:        #e0ddd8;
-  --color-border-subtle: #ece9e4;
-  --color-accent:        #9a7240;   /* warm gold on white — AA */
-  --color-accent-dim:    rgba(154,114,64,0.08);
-  --color-accent-hover:  rgba(154,114,64,0.05);
-  --color-success:       #2e7d52;
-  --color-warning:       #8a6c20;
-  --color-danger:        #b03030;
-  --color-ai-bubble:     #f4f2ef;
+  --color-border:        #c8c4be;
+  --color-border-subtle: #dbd7d2;
+  --color-accent:        #7a5a2e;   /* AA on white #7a5a2e = 4.6:1 */
+  --color-accent-dim:    rgba(122,90,46,0.08);
+  --color-accent-hover:  rgba(122,90,46,0.05);
+  --color-success:       #1e6b3e;
+  --color-warning:       #6b5010;
+  --color-danger:        #962020;
+  --color-ai-bubble:     #f2f0ed;
   --color-user-bubble:   #111111;
   --radius-sm: 2px;
   --radius-md: 3px;
@@ -69,7 +69,7 @@ html, body { height: 100%; }
 body {
   font-family: var(--font-family-primary);
   font-size: var(--font-size-md);
-  font-weight: var(--font-weight-base);
+  font-weight: 450;
   line-height: var(--line-height-base);
   background: var(--color-surface-base);
   color: var(--color-text-primary);
@@ -94,6 +94,16 @@ a { color: inherit; text-decoration: none; }
    TOP NAV
 ══════════════════════════════════════ */
 .nav {
+  /* GNB 다크모드 — .nav 범위 내 변수만 로컬 오버라이드 */
+  --color-surface-base:   #0d0d0d;
+  --color-border-subtle:  #262626;
+  --color-surface-muted:  #f0f0f0;
+  --color-text-primary:   #888888;
+  --color-success:        #4d9e72;
+  --color-accent:         #c8a96e;
+  --color-accent-dim:     rgba(200,169,110,0.12);
+  --color-border:         #2a2a2a;
+
   position: sticky; top: 0; z-index: 200;
   display: flex; align-items: center; justify-content: space-between;
   height: 48px;
@@ -105,7 +115,7 @@ a { color: inherit; text-decoration: none; }
   font-size: var(--font-size-sm);
   letter-spacing: 0.3em;
   color: var(--color-surface-muted);
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
 }
 .nav-logo em { color: var(--color-text-primary); font-style: normal; }
@@ -194,11 +204,6 @@ a { color: inherit; text-decoration: none; }
 .panel-flow { z-index: 102; background: var(--color-surface-panel); }
 .panel-state { z-index: 101; background: var(--color-surface-panel2); }
 
-/* when both open, state shifts left */
-.panel-flow.is-open ~ .panel-state.is-open {
-  transform: translateX(calc(-1 * var(--acc-width)));
-}
-
 /* accordion header */
 .acc-hd {
   flex-shrink: 0;
@@ -212,7 +217,7 @@ a { color: inherit; text-decoration: none; }
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--color-text-primary);
-  font-weight: 500;
+  font-weight: 600;
 }
 .acc-close {
   width: 24px; height: 24px;
@@ -319,7 +324,7 @@ a { color: inherit; text-decoration: none; }
   color: var(--color-surface-muted);
   letter-spacing: 0.03em;
   margin-bottom: 2px;
-  font-weight: 500;
+  font-weight: 600;
 }
 .node-desc {
   font-size: var(--font-size-xs);
@@ -335,12 +340,12 @@ a { color: inherit; text-decoration: none; }
   border: 1px solid;
   margin-top: 2px;
 }
-.tag-green  { border-color: rgba(46,125,82,0.4);  color: var(--color-success); }
-.tag-amber  { border-color: rgba(138,108,32,0.4); color: var(--color-warning); }
-.tag-red    { border-color: rgba(176,48,48,0.4);  color: var(--color-danger); }
-.tag-blue   { border-color: rgba(60,100,180,0.4); color: #3c6ab4; }
-.tag-gold   { border-color: rgba(154,114,64,0.4); color: var(--color-accent); }
-.tag-plain  { border-color: var(--color-border);  color: var(--color-text-primary); }
+.tag-green  { border-color: rgba(30,107,62,0.5);  color: var(--color-success); font-weight:600; }
+.tag-amber  { border-color: rgba(107,80,16,0.5);  color: var(--color-warning);  font-weight:600; }
+.tag-red    { border-color: rgba(150,32,32,0.5);  color: var(--color-danger);   font-weight:600; }
+.tag-blue   { border-color: rgba(42,90,150,0.5);  color: #2a5a96;               font-weight:600; }
+.tag-gold   { border-color: rgba(122,90,46,0.5);  color: var(--color-accent);   font-weight:600; }
+.tag-plain  { border-color: var(--color-border);  color: var(--color-text-primary); font-weight:600; }
 
 /* connector */
 .flow-conn {
@@ -385,7 +390,7 @@ a { color: inherit; text-decoration: none; }
   color: var(--color-text-primary);
   font-size: var(--font-size-xs);
   letter-spacing: 0.08em;
-  font-weight: 500;
+  font-weight: 600;
   text-transform: uppercase;
   white-space: nowrap;
   transition: color var(--motion-instant), border-color var(--motion-instant);
@@ -469,9 +474,10 @@ a { color: inherit; text-decoration: none; }
   font-size: var(--font-size-sm);
   line-height: var(--line-height-base);
   letter-spacing: 0.02em;
+  font-weight: 450;
 }
-.msg.ai   .msg-bubble { background: var(--color-ai-bubble); border: 1px solid var(--color-border); color: var(--color-text-secondary); border-bottom-left-radius: 0; }
-.msg.user .msg-bubble { background: var(--color-user-bubble); color: #f0f0f0; border-bottom-right-radius: 0; }
+.msg.ai   .msg-bubble { background: var(--color-ai-bubble); border: 1px solid var(--color-border); color: var(--color-text-secondary); border-bottom-left-radius: 0; font-weight:450; }
+.msg.user .msg-bubble { background: var(--color-user-bubble); color: #f0f0f0; border-bottom-right-radius: 0; font-weight:450; }
 .msg.system .msg-bubble {
   background: transparent;
   border: 1px solid var(--color-border);
@@ -641,6 +647,7 @@ a { color: inherit; text-decoration: none; }
 .sk { font-size: var(--font-size-xs); color: var(--color-text-primary); letter-spacing: 0.04em; }
 .sv {
   font-size: var(--font-size-xs);
+  font-weight: 550;
   color: var(--color-surface-muted);
   letter-spacing: 0.04em;
   text-align: right;
@@ -660,7 +667,7 @@ a { color: inherit; text-decoration: none; }
   background: var(--color-surface-base);
 }
 .kpi-n {
-  font-size: 22px; font-weight: 300;
+  font-size: 22px; font-weight: 500;
   color: var(--color-surface-muted);
   letter-spacing: -0.01em; line-height: 1;
 }
@@ -752,7 +759,7 @@ a { color: inherit; text-decoration: none; }
   font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
 }
 .emotion-calm   { border-color: rgba(46,125,82,0.4);   color: var(--color-success); }
-.emotion-neutral{ border-color: var(--color-border);   color: var(--color-text-primary); }
+.emotion-neutral{ border-color: var(--color-border);   color: var(--color-text-primary); font-weight:600; }
 .emotion-angry  { border-color: rgba(192,80,80,0.5);    color: var(--color-danger); }
 .emotion-pip { width: 4px; height: 4px; border-radius: 50%; background: currentColor; }
 
@@ -2087,12 +2094,25 @@ function stopAuto() {
 }
 
 function togglePanel(which) {
-  const panelId = which === 'flow' ? 'acc-flow' : 'acc-state';
-  const toggleId = which === 'flow' ? 'toggle-flow' : 'toggle-state';
-  const panel  = document.getElementById(panelId);
-  const btn    = document.getElementById(toggleId);
-  const isOpen = panel.classList.toggle('is-open');
-  btn.classList.toggle('active', isOpen);
+  const otherId    = which === 'flow' ? 'acc-state' : 'acc-flow';
+  const otherBtnId = which === 'flow' ? 'toggle-state' : 'toggle-flow';
+  const panelId    = which === 'flow' ? 'acc-flow'  : 'acc-state';
+  const toggleId   = which === 'flow' ? 'toggle-flow' : 'toggle-state';
+
+  const panel    = document.getElementById(panelId);
+  const btn      = document.getElementById(toggleId);
+  const other    = document.getElementById(otherId);
+  const otherBtn = document.getElementById(otherBtnId);
+
+  const willOpen = !panel.classList.contains('is-open');
+
+  /* 다른 패널이 열려 있으면 먼저 닫기 */
+  other.classList.remove('is-open');
+  otherBtn.classList.remove('active');
+
+  /* 현재 패널 토글 */
+  panel.classList.toggle('is-open', willOpen);
+  btn.classList.toggle('active', willOpen);
 }
 
 function activateNode(id) {
