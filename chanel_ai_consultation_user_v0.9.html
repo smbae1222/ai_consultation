@@ -4,28 +4,31 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>CHANEL — AI 상담 플로우</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css">
 <style>
 /* ─────────────────────────────────────────
-   DESIGN TOKENS  (from brand guideline)
+   DESIGN TOKENS  (Light Mode)
 ───────────────────────────────────────── */
 :root {
   /* typography */
-  --font-family-primary: Helvetica, "Apple SD Gothic Neo", Arial, "Malgun Gothic", sans-serif;
+  --font-family-primary: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   --font-size-xs:   12px;
   --font-size-sm:   13px;
   --font-size-md:   14px;
   --font-size-lg:   15px;
   --font-size-xl:   40px;
-  --font-weight-base: 300;
+  --font-weight-base: 400;
   --line-height-base: 21px;
 
-  /* colour */
-  --color-text-primary:   #9b9b9b;
-  --color-text-secondary: #9b9b9b;
+  /* colour — light mode */
+  --color-text-primary:   #6b6b6b;
+  --color-text-secondary: #6b6b6b;
   --color-text-tertiary:  #333333;
-  --color-text-inverse:   #767676;
-  --color-surface-base:   #000000;
-  --color-surface-muted:  #ffffff;
+  --color-text-inverse:   #999999;
+  --color-surface-base:   #ffffff;
+  --color-surface-muted:  #111111;
+  --color-surface-panel:  #f7f6f4;
+  --color-surface-panel2: #f0eeeb;
 
   /* spacing */
   --space-1: 4px;
@@ -41,19 +44,23 @@
   --motion-instant: 200ms;
   --motion-fast:    300ms;
 
-  /* derived / extended */
-  --color-border:       #2a2a2a;
-  --color-border-subtle:#1a1a1a;
-  --color-accent:       #c8a96e;   /* warm gold — passes AA on black */
-  --color-accent-dim:   rgba(200,169,110,0.12);
-  --color-accent-hover: rgba(200,169,110,0.08);
-  --color-success:      #4d9e72;
-  --color-warning:      #c8a040;
-  --color-danger:       #c05050;
-  --color-ai-bubble:    #0f0f0f;
-  --color-user-bubble:  #f5f5f5;
+  /* derived / extended — light mode */
+  --color-border:        #e0ddd8;
+  --color-border-subtle: #ece9e4;
+  --color-accent:        #9a7240;   /* warm gold on white — AA */
+  --color-accent-dim:    rgba(154,114,64,0.08);
+  --color-accent-hover:  rgba(154,114,64,0.05);
+  --color-success:       #2e7d52;
+  --color-warning:       #8a6c20;
+  --color-danger:        #b03030;
+  --color-ai-bubble:     #f4f2ef;
+  --color-user-bubble:   #111111;
   --radius-sm: 2px;
   --radius-md: 3px;
+
+  /* accordion */
+  --acc-width: 300px;
+  --acc-duration: 280ms;
 }
 
 /* ─── RESET ─── */
@@ -81,7 +88,7 @@ a { color: inherit; text-decoration: none; }
 /* ─── SCROLLBAR ─── */
 ::-webkit-scrollbar { width: 3px; height: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #2a2a2a; }
+::-webkit-scrollbar-thumb { background: var(--color-border); }
 
 /* ══════════════════════════════════════
    TOP NAV
@@ -98,7 +105,7 @@ a { color: inherit; text-decoration: none; }
   font-size: var(--font-size-sm);
   letter-spacing: 0.3em;
   color: var(--color-surface-muted);
-  font-weight: var(--font-weight-base);
+  font-weight: 600;
   text-transform: uppercase;
 }
 .nav-logo em { color: var(--color-text-primary); font-style: normal; }
@@ -140,6 +147,7 @@ a { color: inherit; text-decoration: none; }
   display: flex;
   height: calc(100vh - 48px);
   overflow: hidden;
+  position: relative;
 }
 
 /* ── PANEL SHARED ── */
@@ -157,14 +165,107 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ══════════════════════════════════════
-   LEFT: FLOW DIAGRAM
+   ACCORDION PANELS (Flow + State)
+   — slide in from right edge
 ══════════════════════════════════════ */
-.panel-flow {
-  width: 320px;
-  flex-shrink: 0;
-  border-right: 1px solid var(--color-border-subtle);
-  background: #050505;
+
+/* shared accordion overlay */
+.acc-panel {
+  position: fixed;
+  top: 48px;
+  right: 0;
+  width: var(--acc-width);
+  height: calc(100vh - 48px);
+  background: var(--color-surface-panel);
+  border-left: 1px solid var(--color-border-subtle);
+  display: flex; flex-direction: column;
+  transform: translateX(100%);
+  transition: transform var(--acc-duration) cubic-bezier(.4,0,.2,1),
+              box-shadow var(--acc-duration);
+  z-index: 100;
+  overflow: hidden;
 }
+.acc-panel.is-open {
+  transform: translateX(0);
+  box-shadow: -8px 0 32px rgba(0,0,0,0.08);
+}
+
+/* flow is stacked above state (z-index) */
+.panel-flow { z-index: 102; background: var(--color-surface-panel); }
+.panel-state { z-index: 101; background: var(--color-surface-panel2); }
+
+/* when both open, state shifts left */
+.panel-flow.is-open ~ .panel-state.is-open {
+  transform: translateX(calc(-1 * var(--acc-width)));
+}
+
+/* accordion header */
+.acc-hd {
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--space-6) var(--space-8);
+  border-bottom: 1px solid var(--color-border-subtle);
+  background: var(--color-surface-panel);
+}
+.acc-hd-label {
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+.acc-close {
+  width: 24px; height: 24px;
+  background: transparent; border: none;
+  color: var(--color-text-primary);
+  font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  transition: color var(--motion-instant);
+}
+.acc-close:hover { color: var(--color-surface-muted); }
+
+/* toggle buttons in nav-right area */
+.panel-toggles {
+  display: flex; gap: var(--space-2);
+}
+.panel-toggle-btn {
+  height: 28px;
+  padding: 0 var(--space-6);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-family: var(--font-family-primary);
+  font-weight: 500;
+  transition: border-color var(--motion-instant), color var(--motion-instant),
+              background var(--motion-instant);
+  display: flex; align-items: center; gap: 5px;
+}
+.panel-toggle-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-accent-dim);
+}
+.panel-toggle-btn.active {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-accent-dim);
+}
+.toggle-pip {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: currentColor; flex-shrink: 0;
+  opacity: 0;
+  transition: opacity var(--motion-instant);
+}
+.panel-toggle-btn.active .toggle-pip { opacity: 1; }
+
+/* ══════════════════════════════════════
+   FLOW DIAGRAM (inside accordion)
+══════════════════════════════════════ */
+.panel-flow { z-index: 102; }
+
 .flow-body {
   flex: 1;
   overflow-y: auto;
@@ -190,11 +291,15 @@ a { color: inherit; text-decoration: none; }
   display: flex; align-items: flex-start; gap: var(--space-6);
   padding: var(--space-5) var(--space-6);
   border: 1px solid var(--color-border);
+  background: var(--color-surface-base);
   transition:
     border-color var(--motion-instant),
     background var(--motion-instant);
 }
-.flow-node:hover .flow-node-inner { border-color: #3a3a3a; background: rgba(255,255,255,0.02); }
+.flow-node:hover .flow-node-inner {
+  border-color: var(--color-accent);
+  background: var(--color-accent-dim);
+}
 .flow-node[aria-current="true"] .flow-node-inner {
   border-color: var(--color-accent);
   background: var(--color-accent-dim);
@@ -214,6 +319,7 @@ a { color: inherit; text-decoration: none; }
   color: var(--color-surface-muted);
   letter-spacing: 0.03em;
   margin-bottom: 2px;
+  font-weight: 500;
 }
 .node-desc {
   font-size: var(--font-size-xs);
@@ -229,18 +335,18 @@ a { color: inherit; text-decoration: none; }
   border: 1px solid;
   margin-top: 2px;
 }
-.tag-green  { border-color: rgba(77,158,114,0.4); color: var(--color-success); }
-.tag-amber  { border-color: rgba(200,160,64,0.4);  color: var(--color-warning); }
-.tag-red    { border-color: rgba(192,80,80,0.4);   color: var(--color-danger); }
-.tag-blue   { border-color: rgba(80,140,200,0.4);  color: #6ab0e0; }
-.tag-gold   { border-color: rgba(200,169,110,0.4); color: var(--color-accent); }
-.tag-plain  { border-color: #2a2a2a; color: var(--color-text-primary); }
+.tag-green  { border-color: rgba(46,125,82,0.4);  color: var(--color-success); }
+.tag-amber  { border-color: rgba(138,108,32,0.4); color: var(--color-warning); }
+.tag-red    { border-color: rgba(176,48,48,0.4);  color: var(--color-danger); }
+.tag-blue   { border-color: rgba(60,100,180,0.4); color: #3c6ab4; }
+.tag-gold   { border-color: rgba(154,114,64,0.4); color: var(--color-accent); }
+.tag-plain  { border-color: var(--color-border);  color: var(--color-text-primary); }
 
 /* connector */
 .flow-conn {
   width: 1px; height: 16px;
   background: linear-gradient(to bottom,
-    rgba(200,169,110,0.3), rgba(200,169,110,0.05));
+    rgba(154,114,64,0.3), rgba(154,114,64,0.05));
   margin: 0 0 0 19px;
 }
 /* branch */
@@ -266,7 +372,7 @@ a { color: inherit; text-decoration: none; }
   display: flex;
   border-bottom: 1px solid var(--color-border-subtle);
   overflow-x: auto;
-  background: #050505;
+  background: var(--color-surface-panel);
 }
 .scenario-strip::-webkit-scrollbar { height: 0; }
 .scene-btn {
@@ -275,10 +381,11 @@ a { color: inherit; text-decoration: none; }
   height: 36px;
   background: transparent;
   border: none;
-  border-bottom: 1px solid transparent;
+  border-bottom: 2px solid transparent;
   color: var(--color-text-primary);
   font-size: var(--font-size-xs);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
+  font-weight: 500;
   text-transform: uppercase;
   white-space: nowrap;
   transition: color var(--motion-instant), border-color var(--motion-instant);
@@ -353,7 +460,7 @@ a { color: inherit; text-decoration: none; }
   font-size: 9px; letter-spacing: 0.1em;
 }
 .msg-avi.ai  { background: var(--color-surface-muted); color: var(--color-surface-base); }
-.msg-avi.usr { background: #1a1a1a; color: var(--color-text-primary); border: 1px solid var(--color-border); }
+.msg-avi.usr { background: var(--color-surface-muted); color: var(--color-surface-base); border: 1px solid var(--color-border); }
 
 .msg-body { max-width: 64%; }
 .msg.user .msg-body { align-items: flex-end; }
@@ -364,7 +471,7 @@ a { color: inherit; text-decoration: none; }
   letter-spacing: 0.02em;
 }
 .msg.ai   .msg-bubble { background: var(--color-ai-bubble); border: 1px solid var(--color-border); color: var(--color-text-secondary); border-bottom-left-radius: 0; }
-.msg.user .msg-bubble { background: #f0f0f0; color: var(--color-text-secondary); border-bottom-right-radius: 0; }
+.msg.user .msg-bubble { background: var(--color-user-bubble); color: #f0f0f0; border-bottom-right-radius: 0; }
 .msg.system .msg-bubble {
   background: transparent;
   border: 1px solid var(--color-border);
@@ -398,7 +505,7 @@ a { color: inherit; text-decoration: none; }
   margin-top: var(--space-5);
   padding: var(--space-5) var(--space-6);
   border: 1px solid var(--color-border);
-  background: #070707;
+  background: var(--color-surface-panel);
 }
 .conf-hd { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3); }
 .conf-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-text-primary); }
@@ -410,12 +517,12 @@ a { color: inherit; text-decoration: none; }
 .ho-card {
   margin-top: var(--space-5);
   padding: var(--space-5) var(--space-6);
-  border: 1px solid rgba(200,169,110,0.25);
+  border: 1px solid rgba(154,114,64,0.3);
   background: var(--color-accent-dim);
 }
 .ho-title {
   font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
-  color: var(--color-accent); margin-bottom: var(--space-4);
+  color: var(--color-accent); margin-bottom: var(--space-4); font-weight: 600;
 }
 .ho-row { font-size: var(--font-size-xs); color: var(--color-text-primary); line-height: 18px; }
 
@@ -426,19 +533,32 @@ a { color: inherit; text-decoration: none; }
 }
 .qr-btn {
   padding: var(--space-3) var(--space-6);
-  background: transparent;
+  background: var(--color-surface-base);
   border: 1px solid var(--color-border);
   color: var(--color-text-primary);
   font-size: var(--font-size-xs);
   letter-spacing: 0.07em;
+  font-weight: 500;
   transition:
     border-color var(--motion-instant),
     color var(--motion-instant),
     background var(--motion-instant);
 }
-.qr-btn:hover { border-color: #444; color: var(--color-surface-muted); background: rgba(255,255,255,0.03); }
+.qr-btn:hover { border-color: var(--color-accent); color: var(--color-accent); background: var(--color-accent-dim); }
 .qr-btn:focus-visible { outline-offset: 2px; }
 .qr-btn:disabled { opacity: 0.35; cursor: default; }
+
+/* system bubble */
+.msg.system .msg-bubble {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.06em;
+  padding: var(--space-3) var(--space-7);
+  max-width: 100%;
+  text-align: center;
+}
 
 /* csat */
 .csat-stars { display: flex; gap: var(--space-4); margin-top: var(--space-5); }
@@ -458,13 +578,13 @@ a { color: inherit; text-decoration: none; }
   padding: var(--space-6) var(--space-8);
   border-top: 1px solid var(--color-border-subtle);
   display: flex; gap: var(--space-5); align-items: center;
-  background: #050505;
+  background: var(--color-surface-panel);
 }
 .chat-input {
   flex: 1;
   height: 36px;
   padding: 0 var(--space-7);
-  background: transparent;
+  background: var(--color-surface-base);
   border: 1px solid var(--color-border);
   color: var(--color-surface-muted);
   font-size: var(--font-size-sm);
@@ -473,7 +593,7 @@ a { color: inherit; text-decoration: none; }
   transition: border-color var(--motion-instant);
 }
 .chat-input::placeholder { color: var(--color-text-primary); opacity: 0.5; }
-.chat-input:focus { border-color: #3a3a3a; }
+.chat-input:focus { border-color: var(--color-border); }
 .chat-input:focus-visible { border-color: var(--color-accent); }
 
 .btn-send {
@@ -496,12 +616,11 @@ a { color: inherit; text-decoration: none; }
 .msg { animation: fadeUp var(--motion-fast) both; }
 
 /* ══════════════════════════════════════
-   RIGHT: STATE PANEL
+   RIGHT: STATE PANEL (accordion)
 ══════════════════════════════════════ */
 .panel-state {
-  width: 252px;
-  flex-shrink: 0;
-  background: #050505;
+  /* width set by --acc-width via .acc-panel */
+  background: var(--color-surface-panel2);
 }
 .state-body { flex: 1; overflow-y: auto; }
 
@@ -512,7 +631,7 @@ a { color: inherit; text-decoration: none; }
 .state-title {
   font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
   color: var(--color-text-primary); margin-bottom: var(--space-6);
-  opacity: 0.6;
+  opacity: 0.6; font-weight: 600;
 }
 
 .state-row {
@@ -538,6 +657,7 @@ a { color: inherit; text-decoration: none; }
 .kpi-cell {
   padding: var(--space-6) var(--space-5) var(--space-5);
   border: 1px solid var(--color-border);
+  background: var(--color-surface-base);
 }
 .kpi-n {
   font-size: 22px; font-weight: 300;
@@ -555,9 +675,9 @@ a { color: inherit; text-decoration: none; }
   font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
 }
 .sync-pill.idle    { border-color: var(--color-border); color: var(--color-text-primary); }
-.sync-pill.active  { border-color: rgba(200,169,110,0.4); color: var(--color-accent); }
-.sync-pill.ok      { border-color: rgba(77,158,114,0.4); color: var(--color-success); }
-.sync-pill.err     { border-color: rgba(192,80,80,0.4);  color: var(--color-danger); }
+.sync-pill.active  { border-color: rgba(154,114,64,0.4); color: var(--color-accent); }
+.sync-pill.ok      { border-color: rgba(46,125,82,0.4); color: var(--color-success); }
+.sync-pill.err     { border-color: rgba(176,48,48,0.4); color: var(--color-danger); }
 
 /* log */
 .log-list { display: flex; flex-direction: column; gap: var(--space-4); max-height: 150px; overflow-y: auto; }
@@ -581,7 +701,7 @@ a { color: inherit; text-decoration: none; }
   display: flex; align-items: center; gap: var(--space-3);
   padding: var(--space-4) var(--space-8);
   border-bottom: 1px solid var(--color-border-subtle);
-  background: #050505;
+  background: var(--color-surface-panel);
   overflow-x: auto;
 }
 .kw-strip::-webkit-scrollbar { height: 0; }
@@ -606,7 +726,7 @@ a { color: inherit; text-decoration: none; }
   margin-top: var(--space-5);
   padding: var(--space-5) var(--space-6);
   border: 1px solid var(--color-border);
-  background: #080808;
+  background: var(--color-surface-panel);
 }
 .related-faq-label {
   font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
@@ -615,13 +735,13 @@ a { color: inherit; text-decoration: none; }
 .related-chips { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 .related-chip {
   padding: 3px var(--space-6);
-  background: transparent;
+  background: var(--color-surface-base);
   border: 1px solid var(--color-border);
   color: var(--color-text-primary);
   font-size: 10px; letter-spacing: 0.05em;
   transition: border-color var(--motion-instant), color var(--motion-instant);
 }
-.related-chip:hover { border-color: #3a3a3a; color: var(--color-surface-muted); }
+.related-chip:hover { border-color: var(--color-accent); color: var(--color-accent); }
 .related-chip:focus-visible { outline-offset: 2px; }
 
 /* ── emotion badge ── */
@@ -631,8 +751,8 @@ a { color: inherit; text-decoration: none; }
   border: 1px solid;
   font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
 }
-.emotion-calm   { border-color: rgba(77,158,114,0.4);  color: var(--color-success); }
-.emotion-neutral{ border-color: #2a2a2a;                color: var(--color-text-primary); }
+.emotion-calm   { border-color: rgba(46,125,82,0.4);   color: var(--color-success); }
+.emotion-neutral{ border-color: var(--color-border);   color: var(--color-text-primary); }
 .emotion-angry  { border-color: rgba(192,80,80,0.5);    color: var(--color-danger); }
 .emotion-pip { width: 4px; height: 4px; border-radius: 50%; background: currentColor; }
 
@@ -641,7 +761,7 @@ a { color: inherit; text-decoration: none; }
   margin-top: var(--space-5);
   padding: var(--space-5) var(--space-6);
   border: 1px solid var(--color-border);
-  background: #070707;
+  background: var(--color-surface-panel);
 }
 .crm-card-title {
   font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
@@ -652,7 +772,7 @@ a { color: inherit; text-decoration: none; }
 .crm-tags { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); }
 .crm-tag {
   padding: 1px var(--space-5);
-  border: 1px solid rgba(200,169,110,0.3);
+  border: 1px solid rgba(154,114,64,0.3);
   color: var(--color-accent);
   font-size: 10px; letter-spacing: 0.06em;
 }
@@ -680,11 +800,11 @@ a { color: inherit; text-decoration: none; }
   display: flex; align-items: center; gap: 4px;
   transition: border-color var(--motion-instant), color var(--motion-instant), background var(--motion-instant);
 }
-.feedback-btn:hover { border-color: #3a3a3a; color: var(--color-surface-muted); }
-.feedback-btn.pos:hover { border-color: rgba(77,158,114,0.5); color: var(--color-success); }
-.feedback-btn.neg:hover { border-color: rgba(200,169,110,0.5); color: var(--color-accent); }
-.feedback-btn.selected-pos { border-color: rgba(77,158,114,0.5); color: var(--color-success); background: rgba(77,158,114,0.06); }
-.feedback-btn.selected-neg { border-color: rgba(200,169,110,0.5); color: var(--color-accent); background: var(--color-accent-hover); }
+.feedback-btn:hover { border-color: var(--color-border); color: var(--color-surface-muted); }
+.feedback-btn.pos:hover { border-color: rgba(46,125,82,0.4); color: var(--color-success); }
+.feedback-btn.neg:hover { border-color: rgba(154,114,64,0.4); color: var(--color-accent); }
+.feedback-btn.selected-pos { border-color: rgba(46,125,82,0.4); color: var(--color-success); background: rgba(46,125,82,0.06); }
+.feedback-btn.selected-neg { border-color: rgba(154,114,64,0.4); color: var(--color-accent); background: var(--color-accent-dim); }
 .feedback-btn:disabled { opacity: 0.35; cursor: default; }
 .feedback-btn:focus-visible { outline-offset: 2px; }
 
@@ -693,7 +813,7 @@ a { color: inherit; text-decoration: none; }
   margin-top: var(--space-5);
   padding: var(--space-5) var(--space-6);
   border: 1px solid var(--color-border);
-  background: #070707;
+  background: var(--color-surface-panel);
   animation: fadeUp var(--motion-fast) both;
 }
 .unsat-card-title {
@@ -708,14 +828,14 @@ a { color: inherit; text-decoration: none; }
 .btn-connect {
   flex: 1;
   height: 28px; padding: 0 var(--space-6);
-  background: var(--color-accent);
+  background: var(--color-surface-muted);
   border: none;
   color: var(--color-surface-base);
   font-size: var(--font-size-xs); letter-spacing: 0.1em; text-transform: uppercase;
   font-family: var(--font-family-primary);
   transition: background var(--motion-instant);
 }
-.btn-connect:hover { background: #d4b57a; }
+.btn-connect:hover { background: #333; }
 .btn-connect:focus-visible { outline: 1px solid var(--color-surface-muted); outline-offset: 2px; }
 .btn-connect:disabled { opacity: 0.4; cursor: default; }
 .btn-continue {
@@ -727,19 +847,19 @@ a { color: inherit; text-decoration: none; }
   font-family: var(--font-family-primary);
   transition: border-color var(--motion-instant), color var(--motion-instant);
 }
-.btn-continue:hover { border-color: #3a3a3a; color: var(--color-surface-muted); }
+.btn-continue:hover { border-color: var(--color-surface-muted); color: var(--color-surface-muted); }
 .btn-continue:focus-visible { outline-offset: 2px; }
 
 /* ── agent waiting ── */
 .agent-waiting {
   padding: var(--space-5) var(--space-6);
-  border: 1px solid rgba(200,169,110,0.2);
+  border: 1px solid rgba(154,114,64,0.25);
   background: var(--color-accent-dim);
   display: flex; align-items: center; gap: var(--space-6);
 }
 .waiting-spinner {
   width: 14px; height: 14px; flex-shrink: 0;
-  border: 1.5px solid rgba(200,169,110,0.3);
+  border: 1.5px solid rgba(154,114,64,0.3);
   border-top-color: var(--color-accent);
   border-radius: 50%;
   animation: spin 0.9s linear infinite;
@@ -755,8 +875,8 @@ a { color: inherit; text-decoration: none; }
 /* ── agent connected card ── */
 .agent-card {
   padding: var(--space-5) var(--space-6);
-  border: 1px solid rgba(77,158,114,0.3);
-  background: rgba(77,158,114,0.05);
+  border: 1px solid rgba(46,125,82,0.3);
+  background: rgba(46,125,82,0.05);
 }
 .agent-card-hd {
   display: flex; align-items: center; gap: var(--space-5); margin-bottom: var(--space-4);
@@ -771,8 +891,8 @@ a { color: inherit; text-decoration: none; }
 .agent-role { font-size: 10px; color: var(--color-success); margin-top: 1px; }
 .agent-context {
   padding: var(--space-4) var(--space-5);
-  background: rgba(0,0,0,0.3);
-  border-left: 2px solid rgba(77,158,114,0.4);
+  background: rgba(0,0,0,0.04);
+  border-left: 2px solid rgba(46,125,82,0.4);
 }
 .agent-context-label {
   font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
@@ -783,8 +903,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ── responsive ── */
-@media (max-width:1100px) { .panel-state { display:none; } }
-@media (max-width:780px)  { .panel-flow  { display:none; } }
+@media (max-width:780px) { .panel-toggles .panel-toggle-btn span { display:none; } }
 </style>
 </head>
 <body>
@@ -794,24 +913,143 @@ a { color: inherit; text-decoration: none; }
   <div class="nav-logo">CHANEL <em>/</em> AI Consultation</div>
 
   <div class="nav-tabs" role="tablist" aria-label="뷰 선택">
-    <button class="nav-tab" role="tab" aria-selected="true"  onclick="setTab(this,0)">상담 플로우</button>
+    <button class="nav-tab" role="tab" aria-selected="true" onclick="setTab(this,0)">상담 플로우</button>
   </div>
 
-  <div class="nav-status" aria-live="polite" aria-atomic="true">
-    <div class="status-pip" aria-hidden="true"></div>
-    Azure AI — 연결됨
+  <div style="display:flex;align-items:center;gap:var(--space-5)">
+    <div class="panel-toggles">
+      <button class="panel-toggle-btn" id="toggle-state" onclick="togglePanel('state')" aria-label="Session State 패널 열기">
+        <span class="toggle-pip"></span><span>Session</span>
+      </button>
+      <button class="panel-toggle-btn" id="toggle-flow" onclick="togglePanel('flow')" aria-label="Flow Diagram 패널 열기">
+        <span class="toggle-pip"></span><span>Flow</span>
+      </button>
+    </div>
+    <div class="nav-status" aria-live="polite" aria-atomic="true">
+      <div class="status-pip" aria-hidden="true"></div>
+      Azure AI — 연결됨
+    </div>
   </div>
 </nav>
 
 <!-- ── LAYOUT ── -->
 <div class="layout" role="main">
 
-  <!-- LEFT: FLOW -->
-  <aside class="panel panel-flow" aria-label="상담 플로우 다이어그램">
-    <div class="panel-hd">
-      <span class="panel-hd-label">Flow Diagram</span>
+
+  <!-- CENTER: CHAT -->
+  <section class="panel panel-chat" aria-label="상담 시뮬레이터">
+
+    <!-- scenario strip -->
+    <div class="scenario-strip" role="tablist" aria-label="시나리오 선택">
+      <button class="scene-btn" role="tab" aria-selected="true"  onclick="loadScene(0,this)">① FAQ 자동 해결</button>
+      <button class="scene-btn" role="tab" aria-selected="false" onclick="loadScene(1,this)">② 추가 질문</button>
+      <button class="scene-btn" role="tab" aria-selected="false" onclick="loadScene(2,this)">③ VIP 핸드오버</button>
+      <button class="scene-btn" role="tab" aria-selected="false" onclick="loadScene(3,this)">④ 정책 문의</button>
+      <button class="scene-btn" role="tab" aria-selected="false" onclick="loadScene(4,this)">⑤ CSAT 종료</button>
+      <button class="scene-btn" role="tab" aria-selected="false" onclick="loadScene(5,this)">⑥ 분노 즉시 이관</button>
     </div>
-    <div class="flow-body" role="list">
+
+    <!-- keyword FAQ search strip -->
+    <div class="kw-strip" id="kwStrip" role="group" aria-label="FAQ 키워드 검색">
+      <span class="kw-label">FAQ</span>
+      <button class="kw-btn" onclick="pickKW(this,'재고 확인')">재고 확인</button>
+      <button class="kw-btn" onclick="pickKW(this,'교환·반품')">교환·반품</button>
+      <button class="kw-btn" onclick="pickKW(this,'환불 정책')">환불 정책</button>
+      <button class="kw-btn" onclick="pickKW(this,'매장 위치')">매장 위치</button>
+      <button class="kw-btn" onclick="pickKW(this,'VIP 서비스')">VIP 서비스</button>
+      <button class="kw-btn" onclick="pickKW(this,'향수 용량')">향수 용량</button>
+    </div>
+
+    <!-- header -->
+    <div class="chat-hd">
+      <div class="chat-hd-left">
+        <div class="chat-hd-avi" aria-hidden="true">C</div>
+        <div>
+          <div class="chat-hd-title">CHANEL AI Assistant</div>
+          <div class="chat-hd-sub" id="chatSub">FAQ 자동 해결 시나리오</div>
+        </div>
+      </div>
+      <div class="chat-hd-right">
+        <button class="btn-ghost" onclick="replayScene()" aria-label="시나리오 재시작">재시작</button>
+        <button class="btn-ghost" id="autoBtn" onclick="toggleAuto()" aria-pressed="false">자동재생</button>
+      </div>
+    </div>
+
+    <!-- messages -->
+    <div class="chat-msgs" id="chatMsgs" role="log" aria-live="polite" aria-label="상담 대화"></div>
+
+    <!-- input -->
+    <div class="chat-ft">
+      <label for="chatInput" class="sr-only">메시지 입력</label>
+      <input class="chat-input" id="chatInput" type="text"
+             placeholder="메시지를 입력하세요"
+             onkeydown="handleKey(event)"
+             autocomplete="off"/>
+      <button class="btn-send" onclick="sendMsg()" aria-label="전송">›</button>
+    </div>
+  </section>
+
+  <!-- RIGHT: STATE -->
+</div>
+
+  <!-- ACCORDION: SESSION STATE (right overlay) -->
+  <aside class="acc-panel panel-state" id="acc-state" aria-label="실시간 상태">
+    <div class="acc-hd">
+      <span class="acc-hd-label">Session State</span>
+      <button class="acc-close" onclick="togglePanel('state')" aria-label="닫기">✕</button>
+    </div>
+    <div class="state-body">
+
+      <div class="state-section">
+        <div class="state-title">Salesforce CRM</div>
+        <div class="state-row"><span class="sk">이름</span>    <span class="sv dim" id="sf-nm">—</span></div>
+        <div class="state-row"><span class="sk">등급</span>    <span class="sv accent" id="sf-tier">—</span></div>
+        <div class="state-row"><span class="sk">최근 구매</span><span class="sv dim" id="sf-buy">—</span></div>
+        <div class="state-row">
+          <span class="sk">연동 상태</span>
+          <span id="sf-sync"><span class="sync-pill idle">대기</span></span>
+        </div>
+      </div>
+
+      <div class="state-section">
+        <div class="state-title">NLU 분석</div>
+        <div class="state-row"><span class="sk">의도</span>    <span class="sv accent" id="ai-int">—</span></div>
+        <div class="state-row"><span class="sk">감정</span>    <span id="ai-emo"><span class="emotion-badge emotion-neutral"><span class="emotion-pip"></span>—</span></span></div>
+        <div class="state-row"><span class="sk">신뢰도</span>  <span class="sv" id="ai-conf">—</span></div>
+        <div class="state-row"><span class="sk">처리 경로</span><span class="sv" id="ai-route">—</span></div>
+        <div style="margin-top:var(--space-4);" id="intentChips"></div>
+      </div>
+
+      <div class="state-section">
+        <div class="state-title">세션 KPI</div>
+        <div class="kpi-grid">
+          <div class="kpi-cell"><div class="kpi-n accent" id="k-msg">0</div><div class="kpi-l">메시지</div></div>
+          <div class="kpi-cell"><div class="kpi-n" id="k-res">—</div><div class="kpi-l">해결 상태</div></div>
+          <div class="kpi-cell"><div class="kpi-n" id="k-turns">0</div><div class="kpi-l">대화 턴</div></div>
+          <div class="kpi-cell"><div class="kpi-n" id="k-csat">—</div><div class="kpi-l">CSAT</div></div>
+        </div>
+      </div>
+
+      <div class="state-section" id="crmSummarySection" style="display:none">
+        <div class="state-title">상담 요약 · 태그</div>
+        <div id="crmSummaryBody"></div>
+      </div>
+
+      <div class="state-section">
+        <div class="state-title">시스템 로그</div>
+        <div class="log-list" id="sysLog" role="log" aria-live="off"></div>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- ACCORDION: FLOW DIAGRAM (right overlay, above state) -->
+  <aside class="acc-panel panel-flow" id="acc-flow" aria-label="상담 플로우 다이어그램">
+    <div class="acc-hd">
+      <span class="acc-hd-label">Flow Diagram</span>
+      <button class="acc-close" onclick="togglePanel('flow')" aria-label="닫기">✕</button>
+    </div>
+        <div class="flow-body" role="list">
 
       <div class="flow-group-label" role="presentation">고객 진입</div>
 
@@ -977,108 +1215,6 @@ a { color: inherit; text-decoration: none; }
 
     </div>
   </aside>
-
-  <!-- CENTER: CHAT -->
-  <section class="panel panel-chat" aria-label="상담 시뮬레이터">
-
-    <!-- scenario strip -->
-    <div class="scenario-strip" role="tablist" aria-label="시나리오 선택">
-      <button class="scene-btn" role="tab" aria-selected="true"  onclick="loadScene(0,this)">① FAQ 자동 해결</button>
-      <button class="scene-btn" role="tab" aria-selected="false" onclick="loadScene(1,this)">② 추가 질문</button>
-      <button class="scene-btn" role="tab" aria-selected="false" onclick="loadScene(2,this)">③ VIP 핸드오버</button>
-      <button class="scene-btn" role="tab" aria-selected="false" onclick="loadScene(3,this)">④ 정책 문의</button>
-      <button class="scene-btn" role="tab" aria-selected="false" onclick="loadScene(4,this)">⑤ CSAT 종료</button>
-      <button class="scene-btn" role="tab" aria-selected="false" onclick="loadScene(5,this)">⑥ 분노 즉시 이관</button>
-    </div>
-
-    <!-- keyword FAQ search strip -->
-    <div class="kw-strip" id="kwStrip" role="group" aria-label="FAQ 키워드 검색">
-      <span class="kw-label">FAQ</span>
-      <button class="kw-btn" onclick="pickKW(this,'재고 확인')">재고 확인</button>
-      <button class="kw-btn" onclick="pickKW(this,'교환·반품')">교환·반품</button>
-      <button class="kw-btn" onclick="pickKW(this,'환불 정책')">환불 정책</button>
-      <button class="kw-btn" onclick="pickKW(this,'매장 위치')">매장 위치</button>
-      <button class="kw-btn" onclick="pickKW(this,'VIP 서비스')">VIP 서비스</button>
-      <button class="kw-btn" onclick="pickKW(this,'향수 용량')">향수 용량</button>
-    </div>
-
-    <!-- header -->
-    <div class="chat-hd">
-      <div class="chat-hd-left">
-        <div class="chat-hd-avi" aria-hidden="true">C</div>
-        <div>
-          <div class="chat-hd-title">CHANEL AI Assistant</div>
-          <div class="chat-hd-sub" id="chatSub">FAQ 자동 해결 시나리오</div>
-        </div>
-      </div>
-      <div class="chat-hd-right">
-        <button class="btn-ghost" onclick="replayScene()" aria-label="시나리오 재시작">재시작</button>
-        <button class="btn-ghost" id="autoBtn" onclick="toggleAuto()" aria-pressed="false">자동재생</button>
-      </div>
-    </div>
-
-    <!-- messages -->
-    <div class="chat-msgs" id="chatMsgs" role="log" aria-live="polite" aria-label="상담 대화"></div>
-
-    <!-- input -->
-    <div class="chat-ft">
-      <label for="chatInput" class="sr-only">메시지 입력</label>
-      <input class="chat-input" id="chatInput" type="text"
-             placeholder="메시지를 입력하세요"
-             onkeydown="handleKey(event)"
-             autocomplete="off"/>
-      <button class="btn-send" onclick="sendMsg()" aria-label="전송">›</button>
-    </div>
-  </section>
-
-  <!-- RIGHT: STATE -->
-  <aside class="panel panel-state" aria-label="실시간 상태">
-    <div class="panel-hd"><span class="panel-hd-label">Session State</span></div>
-    <div class="state-body">
-
-      <div class="state-section">
-        <div class="state-title">Salesforce CRM</div>
-        <div class="state-row"><span class="sk">이름</span>    <span class="sv dim" id="sf-nm">—</span></div>
-        <div class="state-row"><span class="sk">등급</span>    <span class="sv accent" id="sf-tier">—</span></div>
-        <div class="state-row"><span class="sk">최근 구매</span><span class="sv dim" id="sf-buy">—</span></div>
-        <div class="state-row">
-          <span class="sk">연동 상태</span>
-          <span id="sf-sync"><span class="sync-pill idle">대기</span></span>
-        </div>
-      </div>
-
-      <div class="state-section">
-        <div class="state-title">NLU 분석</div>
-        <div class="state-row"><span class="sk">의도</span>    <span class="sv accent" id="ai-int">—</span></div>
-        <div class="state-row"><span class="sk">감정</span>    <span id="ai-emo"><span class="emotion-badge emotion-neutral"><span class="emotion-pip"></span>—</span></span></div>
-        <div class="state-row"><span class="sk">신뢰도</span>  <span class="sv" id="ai-conf">—</span></div>
-        <div class="state-row"><span class="sk">처리 경로</span><span class="sv" id="ai-route">—</span></div>
-        <div style="margin-top:var(--space-4);" id="intentChips"></div>
-      </div>
-
-      <div class="state-section">
-        <div class="state-title">세션 KPI</div>
-        <div class="kpi-grid">
-          <div class="kpi-cell"><div class="kpi-n accent" id="k-msg">0</div><div class="kpi-l">메시지</div></div>
-          <div class="kpi-cell"><div class="kpi-n" id="k-res">—</div><div class="kpi-l">해결 상태</div></div>
-          <div class="kpi-cell"><div class="kpi-n" id="k-turns">0</div><div class="kpi-l">대화 턴</div></div>
-          <div class="kpi-cell"><div class="kpi-n" id="k-csat">—</div><div class="kpi-l">CSAT</div></div>
-        </div>
-      </div>
-
-      <div class="state-section" id="crmSummarySection" style="display:none">
-        <div class="state-title">상담 요약 · 태그</div>
-        <div id="crmSummaryBody"></div>
-      </div>
-
-      <div class="state-section">
-        <div class="state-title">시스템 로그</div>
-        <div class="log-list" id="sysLog" role="log" aria-live="off"></div>
-      </div>
-
-    </div>
-  </aside>
-</div>
 
 <!-- SR-only helper -->
 <style>.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;}</style>
@@ -1729,7 +1865,7 @@ function connectAgentAuto() {
 
   /* 긴급 시스템 메시지 */
   const sysEmg = mkEl('div','msg system');
-  sysEmg.innerHTML = `<div class="msg-bubble" role="status" style="border-color:rgba(192,80,80,0.4);color:var(--color-danger)">
+  sysEmg.innerHTML = `<div class="msg-bubble" role="status" style="border-color:var(--color-danger);color:var(--color-danger)">
     [ 긴급 Handover ] 감정 '매우 분노' 감지 — 대화 맥락 즉시 전달, 상담원 우선 배정
   </div>`;
   C.appendChild(sysEmg);
@@ -1806,7 +1942,7 @@ function actionConnect(abId, btn) {
   btn.innerHTML = `<div class="waiting-spinner" aria-hidden="true"
     style="width:12px;height:12px;border-width:1.5px;margin-right:6px;
            display:inline-block;vertical-align:middle;
-           border-color:rgba(0,0,0,0.2);border-top-color:#000"></div>연결 중…`;
+           border-color:rgba(0,0,0,0.15);border-top-color:var(--color-surface-muted)"></div>연결 중…`;
   /* 이후 connectAgent 체인 실행 */
   connectAgent(btn);
 }
@@ -1902,7 +2038,7 @@ function connectAgentFromOffer(offerId, btn) {
   /* 버튼 전체 비활성화 */
   card.querySelectorAll('button').forEach(b => b.disabled = true);
   /* 버튼을 대기 스피너로 교체 */
-  btn.innerHTML = `<div class="waiting-spinner" aria-hidden="true" style="width:12px;height:12px;border-width:1.5px;margin-right:6px;display:inline-block;vertical-align:middle;border-color:rgba(0,0,0,0.2);border-top-color:#000"></div>연결 중…`;
+  btn.innerHTML = `<div class="waiting-spinner" aria-hidden="true" style="width:12px;height:12px;border-width:1.5px;margin-right:6px;display:inline-block;vertical-align:middle;border-color:rgba(0,0,0,0.15);border-top-color:var(--color-surface-muted)"></div>연결 중…`;
   connectAgent(btn);
 }
 
@@ -1948,6 +2084,15 @@ function stopAuto() {
   auto = false;
   const btn = document.getElementById('autoBtn');
   if(btn) { btn.textContent='자동재생'; btn.setAttribute('aria-pressed','false'); }
+}
+
+function togglePanel(which) {
+  const panelId = which === 'flow' ? 'acc-flow' : 'acc-state';
+  const toggleId = which === 'flow' ? 'toggle-flow' : 'toggle-state';
+  const panel  = document.getElementById(panelId);
+  const btn    = document.getElementById(toggleId);
+  const isOpen = panel.classList.toggle('is-open');
+  btn.classList.toggle('active', isOpen);
 }
 
 function activateNode(id) {
