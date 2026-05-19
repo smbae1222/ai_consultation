@@ -1014,7 +1014,7 @@ a { color: inherit; text-decoration: none; }
       <button class="scene-btn" role="tab" aria-selected="false" onclick="loadScene(2,this)">③ VIP 관리</button>
       <button class="scene-btn" role="tab" aria-selected="false" onclick="loadScene(3,this)">④ 정책 문의</button>
       <button class="scene-btn" role="tab" aria-selected="false" onclick="loadScene(4,this)">⑤ 고객 만족</button>
-      <button class="scene-btn" role="tab" aria-selected="false" onclick="loadScene(5,this)">⑥ 불만 접수</button>
+      <button class="scene-btn" role="tab" aria-selected="false" onclick="loadScene(5,this)">⑥ 고객 불만</button>
     </div>
 
     <!-- keyword FAQ search strip -->
@@ -1388,7 +1388,7 @@ const SCENES = [
   {
     label:"정책 문의 시나리오",
     steps:[
-      {r:"sys", t:"고객이 연결되었습니다.", d:400, node:"start"},
+      {r:"sys", t:"샤넬 고객이 연결되었습니다.", d:400, node:"start"},
       {r:"ai",  t:"안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?",
        d:700, node:"kw", sf:{nm:"최다은", tier:"일반", buy:"코코 핸들 백 · 2025.09"}},
       {r:"usr", t:"가방 환불받고 싶어요", d:900, node:"nlu"},
@@ -1423,11 +1423,11 @@ const SCENES = [
        }},
     ]
   },
-  /* ⑥ 불만 접수 */
+  /* ⑥ 고객 불만 */
   {
     label:"분노 감지 즉시 이관 시나리오",
     steps:[
-      {r:"sys", t:"고객이 연결되었습니다.", d:400, node:"start"},
+      {r:"sys", t:"샤넬 고객이 연결되었습니다.", d:400, node:"start"},
       {r:"ai",  t:"안녕하세요, 고객님. CHANEL 공식 AI 상담 서비스입니다. 무엇을 도와드릴까요?",
        d:700, intent:"인사/진입", conf:99, route:"자동 응대", node:"kw",
        sf:{nm:"홍민준", tier:"일반", buy:"클래식 플랩 백 · 2025.12"}},
