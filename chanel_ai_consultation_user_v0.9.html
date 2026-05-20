@@ -1104,9 +1104,7 @@ a { color: inherit; text-decoration: none; }
 
       <div class="state-section">
         <div class="state-title">Salesforce CRM</div>
-        <div class="state-row"><span class="sk">이름</span>    <span class="sv dim" id="sf-nm">—</span></div>
-        <div class="state-row"><span class="sk">등급</span>    <span class="sv accent" id="sf-tier">—</span></div>
-        <div class="state-row"><span class="sk">최근 구매</span><span class="sv dim" id="sf-buy">—</span></div>
+
         <div class="state-row">
           <span class="sk">연동 상태</span>
           <span id="sf-sync"><span class="sync-pill idle">대기</span></span>
@@ -1418,7 +1416,7 @@ const SCENES = [
       {r:"sys", t:"상담 종료", d:1200, sfSync:"ok", node:"sf",
        crmSummary:{
          summary:"N°5 오 드 퍼퓸 용량 문의. FAQ 자동 응대로 해결. 고객 만족 확인.",
-         tags:["향수 문의","N°5","제품 정보","FAQ 해결","일반 등급"],
+         tags:["향수 문의","N°5","제품 정보","FAQ 해결"],
          marketingNote:"향수 라인 관심 고객 — N°5 신규 에디션 출시 시 타겟 가능"
        }},
     ]
@@ -1438,7 +1436,7 @@ const SCENES = [
       {r:"usr", t:"정말 화가 나요. 이런 품질이라면 사지 않았을 거예요. 빨리 처리해 주세요!", d:900, node:"emo"},
       {r:"typ", d:400, node:"conf"},
       {r:"ai",  t:"고객님의 불편한 심정을 충분히 이해합니다. 지금 즉시 전담 상담원에게 연결해 드리겠습니다.",
-       d:1100, intent:"제품 불량 (강한 불만)", conf:48, route:"감정 분노 → 즉시 이관", node:"angry",
+       d:1100, intent:"제품 불량", conf:48, route:"감정 분노 → 즉시 이관", node:"angry",
        showHO:true, hoData:{intent:"제품 불량 / 지퍼 파손 즉시 처리 요청", tier:"일반", buy:"클래식 플랩 백 (2025.12)"},
        autoConnect:true},
     ]
@@ -1477,10 +1475,10 @@ function replayScene() {
 }
 
 function resetState() {
-  ['sf-nm','sf-tier','sf-buy','ai-int','ai-conf','ai-route'].forEach(id => {
+  ['ai-int','ai-conf','ai-route'].forEach(id => {
     const el = document.getElementById(id);
     el.textContent = '—';
-    el.className = id==='sf-tier' ? 'sv accent' : 'sv dim';
+    el.className = 'sv dim';
   });
   document.getElementById('sf-sync').innerHTML = '<span class="sync-pill idle">대기</span>';
   document.getElementById('intentChips').innerHTML = '';
@@ -1514,9 +1512,7 @@ function render(item) {
   /* SF update */
   if(item.sf) {
     const u = item.sf;
-    if(u.nm)   { const e=document.getElementById('sf-nm');   e.textContent=u.nm;   e.className='sv'; }
-    if(u.tier) { const e=document.getElementById('sf-tier'); e.textContent=u.tier; e.className='sv accent'; }
-    if(u.buy)  { const e=document.getElementById('sf-buy');  e.textContent=u.buy;  e.className='sv dim'; }
+
     setSyncPill('active');
     setTimeout(()=>setSyncPill('ok'), 900);
   }
@@ -1665,8 +1661,6 @@ function render(item) {
       extra += `<div class="ho-card">
         <div class="ho-title">Handover Summary — 상담원 전달 정보</div>
         <div class="ho-row">· 문의: ${esc(ho.intent)}</div>
-        <div class="ho-row">· 등급: ${esc(ho.tier)}</div>
-        <div class="ho-row">· 최근 구매: ${esc(ho.buy)}</div>
       </div>`;
     }
     /* related FAQ chips */
@@ -2385,9 +2379,7 @@ function connectAgent(btn) {
   document.getElementById('ai-route').className = 'sv amber';
 
   /* CRM 정보 수집 */
-  const customerName = document.getElementById('sf-nm').textContent;
-  const customerTier = document.getElementById('sf-tier').textContent;
-  const customerBuy  = document.getElementById('sf-buy').textContent;
+  const customerName = '';
   const lastIntent   = document.getElementById('ai-int').textContent;
 
   const C = document.getElementById('chatMsgs');
@@ -2436,9 +2428,6 @@ function connectAgent(btn) {
             </div>
             <div class="agent-context">
               <div class="agent-context-label">전달된 상담 맥락</div>
-              <div class="agent-context-row">· 고객명: ${esc(customerName !== '—' ? customerName : '확인 중')}</div>
-              <div class="agent-context-row">· 등급: ${esc(customerTier !== '—' ? customerTier : '일반')}</div>
-              <div class="agent-context-row">· 최근 구매: ${esc(customerBuy !== '—' ? customerBuy : '정보 없음')}</div>
               <div class="agent-context-row">· 문의 의도: ${esc(lastIntent !== '—' ? lastIntent : '확인 중')}</div>
             </div>
           </div>
@@ -2463,9 +2452,7 @@ function connectAgentAuto() {
   document.getElementById('ai-route').textContent = '상담원 긴급 연결 중';
   document.getElementById('ai-route').className = 'sv red';
 
-  const customerName = document.getElementById('sf-nm').textContent;
-  const customerTier = document.getElementById('sf-tier').textContent;
-  const customerBuy  = document.getElementById('sf-buy').textContent;
+
   const lastIntent   = document.getElementById('ai-int').textContent;
 
   const C = document.getElementById('chatMsgs');
@@ -2521,9 +2508,6 @@ function connectAgentAuto() {
             </div>
             <div class="agent-context">
               <div class="agent-context-label">전달된 상담 맥락</div>
-              <div class="agent-context-row">· 고객명: ${esc(customerName !== '—' ? customerName : '확인 중')}</div>
-              <div class="agent-context-row">· 등급: ${esc(customerTier !== '—' ? customerTier : '일반')}</div>
-              <div class="agent-context-row">· 최근 구매: ${esc(customerBuy !== '—' ? customerBuy : '정보 없음')}</div>
               <div class="agent-context-row">· 문의 의도: ${esc(lastIntent !== '—' ? lastIntent : '확인 중')}</div>
             </div>
           </div>
