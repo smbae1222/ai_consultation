@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHANEL AI Platform Architecture v1.2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #F5F0E8;
+  --cream2: #EDE8DF;
+  --gold: #B8955A;
+  --gold-light: #D4B07A;
+  --gold-dim: rgba(184,149,90,0.15);
+  --gold-line: rgba(184,149,90,0.35);
+  --navy: #1A2332;
+  --navy2: #243044;
+  --text: #2C2C2C;
+  --text-sub: #666055;
+  --text-light: #999;
+  --border: rgba(184,149,90,0.25);
+  --border2: rgba(184,149,90,0.12);
+  --white: #FFFFFF;
+  --azure-blue: #0078D4;
+  --azure-light: rgba(0,120,212,0.08);
+  --green: #107C41;
+  --green-light: rgba(16,124,65,0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--cream);
+  font-family: 'Jost', sans-serif;
+  font-weight: 300;
+  color: var(--text);
+  min-width: 1600px;
+}
+
+/* ── 페이지 wrapper ── */
+.page {
+  width: 1600px;
+  margin: 0 auto;
+  padding: 48px 56px 64px;
+  background: var(--cream);
+  position: relative;
+}
+
+/* ── 헤더 ── */
+.header {
+  text-align: center;
+  margin-bottom: 48px;
+  position: relative;
+}
+.logo-mark {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 300;
+  letter-spacing: 0.3em;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+.logo-double {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+.logo-double span {
+  font-size: 32px;
+  color: var(--gold);
+  font-family: 'Cormorant Garamond', serif;
+}
+.title {
+  font-family: 'Jost', sans-serif;
+  font-size: 22px;
+  font-weight: 200;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin-bottom: 10px;
+}
+.subtitle {
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  color: var(--gold);
+  text-transform: uppercase;
+  font-weight: 400;
+}
+.subtitle span { margin: 0 10px; opacity: 0.5; }
+.version-badge {
+  position: absolute;
+  top: 0; right: 0;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--text-sub);
+  font-weight: 400;
+  background: var(--gold-dim);
+  border: 1px solid var(--gold-line);
+  padding: 4px 10px;
+}
+
+/* ── 메인 그리드 ── */
+.main-grid {
+  display: grid;
+  grid-template-columns: 220px 1fr 1fr 1fr 1fr 200px;
+  grid-template-rows: auto auto auto auto auto auto;
+  gap: 12px;
+}
+
+/* ── 공통 카드 ── */
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 14px 16px;
+  position: relative;
+}
+.card.azure { background: var(--azure-light); border-color: rgba(0,120,212,0.2); }
+.card.gold-bg { background: var(--gold-dim); border-color: var(--gold-line); }
+.card.navy-bg { background: var(--navy); border-color: var(--navy); }
+.card.green-bg { background: var(--green-light); border-color: rgba(16,124,65,0.25); }
+
+/* ── 섹션 레이블 ── */
+.sec-label {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sec-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--gold-line);
+}
+.sec-num {
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--gold);
+  background: var(--gold-dim);
+  border: 1px solid var(--gold-line);
+  width: 18px; height: 18px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.card.navy-bg .sec-label { color: var(--gold-light); }
+.card.navy-bg .sec-label::after { background: rgba(184,149,90,0.3); }
+
+/* ── 서비스 아이템 ── */
+.svc {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px;
+  margin-bottom: 5px;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+  cursor: default;
+}
+.svc:last-child { margin-bottom: 0; }
+.svc:hover { border-color: var(--gold-line); background: var(--gold-dim); }
+.svc .icon {
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  font-size: 15px;
+}
+.svc .icon.azure { background: rgba(0,120,212,0.1); color: var(--azure-blue); }
+.svc .icon.gold { background: var(--gold-dim); color: var(--gold); }
+.svc .icon.green { background: rgba(16,124,65,0.1); color: var(--green); }
+.svc .icon.purple { background: rgba(120,60,180,0.1); color: #7B3FB8; }
+.svc .icon.teal { background: rgba(0,150,136,0.1); color: #00897B; }
+.svc .icon.red { background: rgba(200,60,60,0.1); color: #C83C3C; }
+.svc .icon.orange { background: rgba(220,120,0,0.1); color: #DC7800; }
+.svc-text { flex: 1; min-width: 0; }
+.svc-name {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+}
+.svc-desc {
+  font-size: 9.5px;
+  color: var(--text-sub);
+  letter-spacing: 0.01em;
+  margin-top: 1px;
+  line-height: 1.4;
+}
+.card.navy-bg .svc-name { color: rgba(255,255,255,0.9); }
+.card.navy-bg .svc-desc { color: rgba(255,255,255,0.5); }
+
+/* ── 컨텍스트 칩 ── */
+.ctx-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border: 1px solid var(--border);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: var(--text-sub);
+  margin: 3px 3px 0 0;
+  background: var(--white);
+}
+
+/* ── 화살표 연결선 ── */
+.arrow-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 0 8px;
+}
+.arrow-line {
+  height: 1px;
+  background: var(--gold);
+  flex: 1;
+  position: relative;
+}
+.arrow-line::after {
+  content: '▶';
+  position: absolute;
+  right: -6px;
+  top: -6px;
+  font-size: 10px;
+  color: var(--gold);
+}
+.bi-arrow::before {
+  content: '◀';
+  position: absolute;
+  left: -6px;
+  top: -6px;
+  font-size: 10px;
+  color: var(--gold);
+}
+
+/* ── 거버넌스 바 ── */
+.gov-bar {
+  background: var(--cream2);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--gold);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.gov-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  background: var(--white);
+  border: 1px solid var(--border);
+}
+.gov-icon { font-size: 14px; }
+.gov-text .gov-name { font-size: 10px; font-weight: 500; color: var(--text); letter-spacing: 0.05em; }
+.gov-text .gov-role { font-size: 9px; color: var(--text-sub); margin-top: 1px; }
+
+/* ── 범례 ── */
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border2);
+}
+.legend-item {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 10px; color: var(--text-sub); letter-spacing: 0.05em;
+}
+.leg-line { width: 28px; height: 1px; background: var(--gold); }
+.leg-line.dot { background: none; border-top: 1px dashed var(--gold); }
+.legend-logo {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 8px;
+}
+.ms-logo {
+  display: flex; gap: 2px;
+}
+.ms-sq { width: 9px; height: 9px; }
+.ms-label { font-size: 10px; font-weight: 400; color: var(--text-sub); letter-spacing: 0.1em; }
+.footer-brand {
+  font-family: 'Jost', sans-serif;
+  font-size: 13px;
+  font-weight: 200;
+  letter-spacing: 0.3em;
+  color: var(--navy);
+  text-transform: uppercase;
+}
+
+/* ── 스팬 레이아웃 헬퍼 ── */
+.span2 { grid-column: span 2; }
+.span3 { grid-column: span 3; }
+.span4 { grid-column: span 4; }
+.span5 { grid-column: span 5; }
+.span6 { grid-column: span 6; }
+
+/* ── 단면 섹션 (전체 폭 블록) ── */
+.section-block {
+  border: 1px solid var(--border);
+  background: var(--white);
+  padding: 14px 16px;
+}
+.section-block.channel {
+  background: var(--navy);
+  border-color: var(--navy);
+}
+
+/* ── 채널 아이템 ── */
+.channel-items {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.channel-chip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(184,149,90,0.3);
+  flex: 1;
+  min-width: 180px;
+}
+.channel-chip .ch-icon { font-size: 16px; }
+.channel-chip .ch-name { font-size: 11px; font-weight: 400; color: rgba(255,255,255,0.9); letter-spacing: 0.05em; }
+.channel-chip .ch-desc { font-size: 9.5px; color: rgba(255,255,255,0.5); margin-top: 1px; }
+
+/* ── 가로 레이아웃 (메인 플로우) ── */
+.flow-grid {
+  display: grid;
+  grid-template-columns: 200px 16px 1fr 16px 1fr 16px 1fr 16px 1fr 16px 200px;
+  gap: 0;
+  align-items: start;
+  margin: 12px 0;
+}
+.flow-arrow {
+  display: flex;
+  align-items: flex-start;
+  padding-top: 36px;
+  justify-content: center;
+}
+.flow-arrow svg { color: var(--gold); }
+
+/* ── 컨텍스트 매핑 그리드 ── */
+.ctx-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin: 12px 0;
+}
+.ctx-card {
+  border: 1px solid var(--border);
+  background: var(--white);
+  padding: 12px 14px;
+  position: relative;
+}
+.ctx-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--gold);
+}
+.ctx-card.chat::before { background: #2E5FA3; }
+.ctx-card.analysis::before { background: #107C41; }
+.ctx-card.agent::before { background: #B8955A; }
+.ctx-card.analytics::before { background: #7B3FB8; }
+.ctx-title {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.ctx-azure {
+  font-size: 9.5px;
+  color: var(--azure-blue);
+  font-weight: 400;
+  margin-bottom: 4px;
+}
+.ctx-deploy {
+  font-size: 9px;
+  color: var(--text-sub);
+  padding: 2px 6px;
+  background: var(--azure-light);
+  display: inline-block;
+  border: 1px solid rgba(0,120,212,0.15);
+  margin-top: 4px;
+}
+
+/* ── 층별 세로 레이아웃 ── */
+.layer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 12px;
+}
+.layer-grid.five { grid-template-columns: 1fr 1fr 1fr 1fr 1fr; }
+.layer-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+.layer-grid.two { grid-template-columns: 1fr 1fr; }
+
+/* ── 구분 제목 ── */
+.section-title {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--text-sub);
+  margin-bottom: 10px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--border2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title .num {
+  font-size: 8px;
+  background: var(--navy);
+  color: var(--gold-light);
+  padding: 2px 5px;
+  letter-spacing: 0.05em;
+}
+
+/* ── 반응형 화살표 SVG ── */
+.v-arrow { display: flex; justify-content: center; padding: 4px 0; }
+
+/* ── 핵심 흐름 화살표 ── */
+.h-flow {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr auto 1fr;
+  gap: 0;
+  align-items: center;
+  margin: 8px 0;
+}
+.h-flow-arrow {
+  padding: 0 6px;
+  color: var(--gold);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 8.5px;
+  padding: 1px 5px;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+  vertical-align: middle;
+  margin-left: 4px;
+}
+.tag.new { background: var(--gold-dim); color: var(--gold); border: 1px solid var(--gold-line); }
+.tag.fix { background: rgba(0,120,212,0.1); color: var(--azure-blue); border: 1px solid rgba(0,120,212,0.2); }
+
+.divider-line {
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold-line), transparent);
+  margin: 4px 0;
+}
+
+/* 점선 거버넌스 라인 */
+.dot-arrow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  color: var(--text-sub);
+  letter-spacing: 0.05em;
+}
+.dot-line { flex: 1; border-top: 1px dashed rgba(184,149,90,0.4); }
+
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── 헤더 ── -->
+  <div class="header">
+    <div class="logo-double">
+      <span>◎</span>
+    </div>
+    <div class="logo-mark">CHANEL</div>
+    <div class="title">AI Platform Architecture</div>
+    <div class="subtitle">Integrated <span>·</span> Refined <span>·</span> Intelligent</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       1. 외부 채널 진입점
+  ══════════════════════════════════════════ -->
+  <div class="section-block channel" style="margin-bottom:12px;">
+    <div class="sec-label" style="color:var(--gold-light);margin-bottom:8px;">
+      <span class="sec-num" style="background:rgba(184,149,90,0.2);border-color:rgba(184,149,90,0.4);">1</span>
+      External Channel Entry — 외부 채널 진입점
+    </div>
+    <div class="channel-items">
+      <div class="channel-chip">
+        <div class="ch-icon">💬</div>
+        <div>
+          <div class="ch-name">카카오 상담톡 Webhook API</div>
+          <div class="ch-desc">POST /webhook → 즉시 200 OK + 비동기 처리</div>
+        </div>
+      </div>
+      <div class="channel-chip">
+        <div class="ch-icon">📨</div>
+        <div>
+          <div class="ch-name">카카오 비즈메시지 API</div>
+          <div class="ch-desc">역방향 호출 — 비동기 처리 완료 후 답변 발송</div>
+        </div>
+      </div>
+      <div class="channel-chip">
+        <div class="ch-icon">🏢</div>
+        <div>
+          <div class="ch-name">Salesforce CRM</div>
+          <div class="ch-desc">실시간 고객 조회 (2초 타임아웃) + 배치 이력 저장 </div>
+        </div>
+      </div>
+      <div class="channel-chip">
+        <div class="ch-icon">👤</div>
+        <div>
+          <div class="ch-name">상담원 UI / Admin Dashboard</div>
+          <div class="ch-desc">라이브챗 · 인수인계 카드 · 관리자 대시보드</div>
+        </div>
+      </div>
+      <div class="channel-chip">
+        <div class="ch-icon">📱</div>
+        <div>
+          <div class="ch-name">Business Consumption</div>
+          <div class="ch-desc">Web / Mobile · Partner / Retailer · Back Office / Admin</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       2. API Gateway + Message Preprocessing (가로 2분할)
+  ══════════════════════════════════════════ -->
+  <div style="display:grid;grid-template-columns:1fr 420px;gap:12px;margin-bottom:12px;">
+    <!-- API Gateway -->
+    <div class="card navy-bg">
+      <div class="sec-label">
+        <span class="sec-num" style="background:rgba(184,149,90,0.2);border-color:rgba(184,149,90,0.4);">2</span>
+        API Gateway / Security &amp; Traffic Mgmt. Layer
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+        <div class="svc">
+          <div class="icon azure" style="background:rgba(255,255,255,0.1);color:#50A8FF;">☁️</div>
+          <div class="svc-text">
+            <div class="svc-name">Azure API Management</div>
+            <div class="svc-desc">진입점 게이트웨이 · 오케스트레이션 프록시 · CDN 후방 라우팅</div>
+          </div>
+        </div>
+        <div class="svc">
+          <div class="icon azure" style="background:rgba(255,255,255,0.1);color:#50A8FF;">🛡️</div>
+          <div class="svc-text">
+            <div class="svc-name">Azure WAF</div>
+            <div class="svc-desc">웹 애플리케이션 방화벽</div>
+          </div>
+        </div>
+        <div class="svc">
+          <div class="icon azure" style="background:rgba(255,255,255,0.1);color:#50A8FF;">🔒</div>
+          <div class="svc-text">
+            <div class="svc-name">Azure DDoS Protection</div>
+            <div class="svc-desc">JWT 인증 · RBAC · Rate Limit</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Message Preprocessing Pipeline -->
+    <div class="card" style="border-left:3px solid var(--gold);">
+      <div class="sec-label">
+        <span class="sec-num">3</span>
+        Message Preprocessing Pipeline
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+        <div style="text-align:center;padding:8px 10px;border:1px solid var(--border);background:var(--gold-dim);flex:1;">
+          <div style="font-size:11px;font-weight:500;color:var(--text);">표준 스키마 변환</div>
+          <div style="font-size:9px;color:var(--text-sub);margin-top:3px;">MessageDTO</div>
+        </div>
+        <div style="color:var(--gold);font-size:14px;">→</div>
+        <div style="text-align:center;padding:8px 10px;border:1px solid var(--border);flex:1;">
+          <div style="font-size:11px;font-weight:500;color:var(--text);">PII 마스킹</div>
+          <div style="font-size:9px;color:var(--text-sub);margin-top:3px;">[MASKED] 치환</div>
+        </div>
+        <div style="color:var(--gold);font-size:14px;">→</div>
+        <div style="text-align:center;padding:8px 10px;border:1px solid var(--border);flex:1;">
+          <div style="font-size:11px;font-weight:500;color:var(--text);">금칙어 탐지</div>
+          <div style="font-size:9px;color:var(--text-sub);margin-top:3px;">PASS / WARN / BLOCK</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       4. DDD Bounded Context → Azure 서비스 매핑
+  ══════════════════════════════════════════ -->
+  <div style="margin-bottom:12px;">
+    <div class="section-block" style="border-top:2px solid #2E5FA3;padding-bottom:0;">
+      <div class="section-title">
+        <span class="num">4</span>
+        DDD Bounded Context &amp; Azure 서비스 매핑
+      </div>
+      <div class="ctx-grid" style="margin:0;padding-bottom:14px;">
+        <!-- Chat Routing -->
+        <div class="ctx-card chat">
+          <div class="ctx-title">Chat Routing Context</div>
+          <div class="svc" style="padding:5px 0;border:none;">
+            <div class="icon azure">⚙️</div>
+            <div class="svc-text">
+              <div class="svc-name">ChatRoutingService</div>
+              <div class="svc-desc">오케스트레이터 — 신뢰도 분기·이관 트리거</div>
+            </div>
+          </div>
+          <div class="svc" style="padding:5px 0;border:none;">
+            <div class="icon azure">🔧</div>
+            <div class="svc-text">
+              <div class="svc-name">ClarificationService</div>
+              <div class="svc-desc">재질문/선택지 — AMBIGUOUS·LOW_CONF·POLICY_BLOCK</div>
+            </div>
+          </div>
+          <div class="svc" style="padding:5px 0;border:none;">
+            <div class="icon purple">👑</div>
+            <div class="svc-text">
+              <div class="svc-name">VIPPriorityService</div>
+              <div class="svc-desc">VIP 즉시 이관 · HIGH 우선 큐</div>
+            </div>
+          </div>
+          <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border2);">
+            <div class="ctx-azure">Azure Container Apps (ChatRoutingService Pod)</div>
+            <span class="ctx-deploy">AKS / Container Apps</span>
+          </div>
+        </div>
+        <!-- Context Analysis -->
+        <div class="ctx-card analysis">
+          <div class="ctx-title">Context Analysis Context</div>
+          <div class="svc" style="padding:5px 0;border:none;">
+            <div class="icon green">🧠</div>
+            <div class="svc-text">
+              <div class="svc-name">ContextAnalysisService</div>
+              <div class="svc-desc">발화 의도 파악 · 신뢰도 점수 반환</div>
+            </div>
+          </div>
+          <div class="svc" style="padding:5px 0;border:none;">
+            <div class="icon green">📚</div>
+            <div class="svc-text">
+              <div class="svc-name">KnowledgeBase</div>
+              <div class="svc-desc">유사어 룰 VersionTag · 롤백 이력 관리</div>
+            </div>
+          </div>
+          <div class="svc" style="padding:5px 0;border:none;">
+            <div class="icon green">🔍</div>
+            <div class="svc-text">
+              <div class="svc-name">InquiryContext Aggregate</div>
+              <div class="svc-desc">발화 이력 · 의도 점수 · 근거 FAQ</div>
+            </div>
+          </div>
+          <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border2);">
+            <div class="ctx-azure">Azure App Service + Azure OpenAI + Azure AI Search <span class="tag fix">M-3</span></div>
+            <span class="ctx-deploy">AKS / App Service</span>
+          </div>
+        </div>
+        <!-- Agent Allocation -->
+        <div class="ctx-card agent">
+          <div class="ctx-title">Agent Allocation Context</div>
+          <div class="svc" style="padding:5px 0;border:none;">
+            <div class="icon orange">👥</div>
+            <div class="svc-text">
+              <div class="svc-name">AgentAllocationService</div>
+              <div class="svc-desc">스킬·부하 기반 배정 · Priority Queue</div>
+            </div>
+          </div>
+          <div class="svc" style="padding:5px 0;border:none;">
+            <div class="icon orange">📋</div>
+            <div class="svc-text">
+              <div class="svc-name">CounselingTicket Aggregate</div>
+              <div class="svc-desc">VIP=HIGH · 일반=NORMAL · HandoverSummary</div>
+            </div>
+          </div>
+          <div class="svc" style="padding:5px 0;border:none;">
+            <div class="icon orange">📡</div>
+            <div class="svc-text">
+              <div class="svc-name">Azure SignalR Service</div>
+              <div class="svc-desc">상담원 화면 실시간 푸시 <span class="tag new">향후목표</span></div>
+            </div>
+          </div>
+          <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border2);">
+            <div class="ctx-azure">Azure Container Apps + Azure SignalR Service</div>
+            <span class="ctx-deploy">AKS / Container Apps</span>
+          </div>
+        </div>
+        <!-- Analytics -->
+        <div class="ctx-card analytics">
+          <div class="ctx-title">Analytics Context</div>
+          <div class="svc" style="padding:5px 0;border:none;">
+            <div class="icon purple">📊</div>
+            <div class="svc-text">
+              <div class="svc-name">TopicAnalyzer · SentimentAnalyzer</div>
+              <div class="svc-desc">토픽 모델링 · 감성 분석</div>
+            </div>
+          </div>
+          <div class="svc" style="padding:5px 0;border:none;">
+            <div class="icon purple">⚡</div>
+            <div class="svc-text">
+              <div class="svc-name">AlertService + Stream Analytics</div>
+              <div class="svc-desc">실시간 임계치 탐지 · 이탈률 급증 감지</div>
+            </div>
+          </div>
+          <div class="svc" style="padding:5px 0;border:none;">
+            <div class="icon purple">🔄</div>
+            <div class="svc-text">
+              <div class="svc-name">RetrainingPipeline</div>
+              <div class="svc-desc">MLOps · 카나리 배포 · MLflow</div>
+            </div>
+          </div>
+          <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border2);">
+            <div class="ctx-azure">Azure Databricks + Synapse Analytics + Stream Analytics <span class="tag fix">M-5</span></div>
+            <span class="ctx-deploy">Managed Analytics</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       5~8. 중간 4개 레이어 (가로)
+  ══════════════════════════════════════════ -->
+  <div style="display:grid;grid-template-columns:1fr 16px 1fr 16px 1fr 16px 1fr;gap:0;margin-bottom:12px;align-items:start;">
+
+    <!-- 5. Ingestion & Data Mgmt -->
+    <div class="card">
+      <div class="sec-label"><span class="sec-num">5</span> Ingestion &amp; Data Management</div>
+      <div class="svc">
+        <div class="icon azure">⚡</div>
+        <div class="svc-text">
+          <div class="svc-name">Azure Event Hubs</div>
+          <div class="svc-desc">Kafka 호환 · message.received · session.closed · DLQ <span class="tag fix">M-2</span></div>
+        </div>
+      </div>
+      <div class="svc">
+        <div class="icon azure">🏔️</div>
+        <div class="svc-text">
+          <div class="svc-name">Azure Data Lake Storage Gen2</div>
+          <div class="svc-desc">학습 데이터 · 분석 원본 <span class="tag fix">M-4</span></div>
+        </div>
+      </div>
+      <div class="svc">
+        <div class="icon azure">🏭</div>
+        <div class="svc-text">
+          <div class="svc-name">Azure Data Factory</div>
+          <div class="svc-desc">ETL 파이프라인 · 데이터 수집 자동화</div>
+        </div>
+      </div>
+      <div class="svc">
+        <div class="icon azure">🔥</div>
+        <div class="svc-text">
+          <div class="svc-name">Azure Databricks (수집)</div>
+          <div class="svc-desc">Salesforce · 카카오 원시 데이터 ETL</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 화살표 -->
+    <div class="flow-arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="var(--gold)"><path d="M8 2v9M4 8l4 4 4-4" stroke="var(--gold)" stroke-width="1.5" fill="none"/></svg></div>
+
+    <!-- 6. Agent & Orchestration -->
+    <div class="card">
+      <div class="sec-label"><span class="sec-num">6</span> Agent &amp; Orchestration</div>
+      <div class="svc">
+        <div class="icon azure">☁️</div>
+        <div class="svc-text">
+          <div class="svc-name">Azure API Management</div>
+          <div class="svc-desc">AI 서비스 호출 라우팅 · 오케스트레이션 프록시</div>
+        </div>
+      </div>
+      <div class="svc">
+        <div class="icon azure">⚡</div>
+        <div class="svc-text">
+          <div class="svc-name">Azure Logic Apps</div>
+          <div class="svc-desc">VIP 에스컬레이션 · Salesforce 알림 자동화 <span class="tag new">향후목표</span></div>
+        </div>
+      </div>
+      <div class="svc">
+        <div class="icon azure">🔗</div>
+        <div class="svc-text">
+          <div class="svc-name">Azure Service Bus</div>
+          <div class="svc-desc">SessionClosed 이벤트 → Salesforce 배치 저장</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 화살표 -->
+    <div class="flow-arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="var(--gold)"><path d="M8 2v9M4 8l4 4 4-4" stroke="var(--gold)" stroke-width="1.5" fill="none"/></svg></div>
+
+    <!-- 7. AI & ML Layer -->
+    <div class="card" style="background:var(--azure-light);border-color:rgba(0,120,212,0.2);">
+      <div class="sec-label"><span class="sec-num">7</span> AI &amp; ML Layer</div>
+      <div class="svc">
+        <div class="icon azure">🤖</div>
+        <div class="svc-text">
+          <div class="svc-name">Azure OpenAI Service</div>
+          <div class="svc-desc">GPT-4o · LangChain · Azure AI Language</div>
+        </div>
+      </div>
+      <div class="svc">
+        <div class="icon azure">🔍</div>
+        <div class="svc-text">
+          <div class="svc-name">Azure AI Search</div>
+          <div class="svc-desc">Vector DB · 하이브리드 검색</div>
+        </div>
+      </div>
+      <div class="svc">
+        <div class="icon azure">🧪</div>
+        <div class="svc-text">
+          <div class="svc-name">Azure Machine Learning + MLflow</div>
+          <div class="svc-desc">재학습 스케줄 · 카나리 배포 · 성능 리포팅</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 화살표 -->
+    <div class="flow-arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="var(--gold)"><path d="M8 2v9M4 8l4 4 4-4" stroke="var(--gold)" stroke-width="1.5" fill="none"/></svg></div>
+
+    <!-- 8. Data Processing Layer -->
+    <div class="card">
+      <div class="sec-label"><span class="sec-num">8</span> Data Processing Layer</div>
+      <div class="svc">
+        <div class="icon azure">🔥</div>
+        <div class="svc-text">
+          <div class="svc-name">Azure Databricks (분석)</div>
+          <div class="svc-desc">Spark 배치 분석 · TopicAnalyzer · SentimentAnalyzer</div>
+        </div>
+      </div>
+      <div class="svc">
+        <div class="icon azure">📈</div>
+        <div class="svc-text">
+          <div class="svc-name">Azure Synapse Analytics</div>
+          <div class="svc-desc">대규모 분석 쿼리 · 마케팅 인사이트</div>
+        </div>
+      </div>
+      <div class="svc">
+        <div class="icon azure">⚡</div>
+        <div class="svc-text">
+          <div class="svc-name">Azure Stream Analytics</div>
+          <div class="svc-desc">실시간 이벤트 스트림 · 이탈률 급증 탐지</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       9~11. Application + Presentation + API Gateway
+  ══════════════════════════════════════════ -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px;">
+
+    <!-- 9. Application Layer -->
+    <div class="card">
+      <div class="sec-label"><span class="sec-num">9</span> Application Layer</div>
+      <div class="svc">
+        <div class="icon azure">🌐</div>
+        <div class="svc-text">
+          <div class="svc-name">Azure App Service</div>
+          <div class="svc-desc">ContextAnalysisService 호스팅</div>
+        </div>
+      </div>
+      <div class="svc">
+        <div class="icon azure">📦</div>
+        <div class="svc-text">
+          <div class="svc-name">Azure Container Apps</div>
+          <div class="svc-desc">Chat Routing · Agent Allocation Pod</div>
+        </div>
+      </div>
+      <div class="svc">
+        <div class="icon azure">⚡</div>
+        <div class="svc-text">
+          <div class="svc-name">Azure Functions (이벤트)</div>
+          <div class="svc-desc">고객만족도 수집 · 세션 종료 · 알림 발송</div>
+        </div>
+      </div>
+      <div class="svc">
+        <div class="icon teal">📡</div>
+        <div class="svc-text">
+          <div class="svc-name">Azure SignalR Service</div>
+          <div class="svc-desc">상담원 화면 실시간 푸시 · HandoverSummary</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. Presentation Layer -->
+    <div class="card">
+      <div class="sec-label"><span class="sec-num">10</span> Presentation Layer</div>
+      <div class="svc">
+        <div class="icon azure">🚪</div>
+        <div class="svc-text">
+          <div class="svc-name">Azure Front Door</div>
+          <div class="svc-desc">글로벌 CDN · SSL Termination · 부하 분산</div>
+        </div>
+      </div>
+      <div class="svc">
+        <div class="icon azure">☁️</div>
+        <div class="svc-text">
+          <div class="svc-name">Azure API Management</div>
+          <div class="svc-desc">CDN 후방 라우팅 · SPA·API 트래픽 분기</div>
+        </div>
+      </div>
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border2);">
+        <div class="section-title" style="margin-bottom:6px;"><span class="num">12</span> Business Consumption</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;">
+          <span class="ctx-chip">📱 Web / Mobile</span>
+          <span class="ctx-chip">🤝 Partner / Retailer</span>
+          <span class="ctx-chip">🏢 Back Office / Admin</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11. Message & Integration -->
+    <div class="card">
+      <div class="sec-label"><span class="sec-num">11</span> Message &amp; Integration Flow</div>
+      <div class="svc">
+        <div class="icon azure">📨</div>
+        <div class="svc-text">
+          <div class="svc-name">Azure Service Bus</div>
+          <div class="svc-desc">SessionClosed → Salesforce 배치 저장 연동</div>
+        </div>
+      </div>
+      <div class="svc">
+        <div class="icon azure">⚡</div>
+        <div class="svc-text">
+          <div class="svc-name">Azure Functions (통합)</div>
+          <div class="svc-desc">Salesforce API 호출 · 외부 시스템 연동</div>
+        </div>
+      </div>
+      <div class="svc">
+        <div class="icon azure">🌐</div>
+        <div class="svc-text">
+          <div class="svc-name">Azure Event Grid</div>
+          <div class="svc-desc">이벤트 라우팅 · 구독 기반 배포</div>
+        </div>
+      </div>
+      <div class="svc">
+        <div class="icon red">🏢</div>
+        <div class="svc-text">
+          <div class="svc-name">Salesforce CRM (배치)</div>
+          <div class="svc-desc">상담 이력 자동 저장 · CSAT 점수 · 검색 키 인덱싱</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       Database Layer
+  ══════════════════════════════════════════ -->
+  <div class="card" style="margin-bottom:12px;border-top:2px solid var(--navy);">
+    <div class="sec-label"><span class="sec-num">DB</span> Database Layer</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+      <div class="svc" style="flex-direction:column;align-items:flex-start;border:1px solid var(--border);padding:10px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+          <div class="icon green" style="width:24px;height:24px;font-size:13px;">🐘</div>
+          <div class="svc-name">PostgreSQL</div>
+        </div>
+        <div class="svc-desc">세션 · 상담원 · 티켓 · CSAT<br>Azure Database for PostgreSQL</div>
+      </div>
+      <div class="svc" style="flex-direction:column;align-items:flex-start;border:1px solid var(--border);padding:10px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+          <div class="icon azure" style="width:24px;height:24px;font-size:13px;">🔍</div>
+          <div class="svc-name">Azure AI Search</div>
+        </div>
+        <div class="svc-desc">임베딩 · 지식 베이스</div>
+      </div>
+      <div class="svc" style="flex-direction:column;align-items:flex-start;border:1px solid var(--border);padding:10px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+          <div class="icon azure" style="width:24px;height:24px;font-size:13px;">🏔️</div>
+          <div class="svc-name">Azure Data Lake Storage Gen2</div>
+        </div>
+        <div class="svc-desc">학습 데이터 · 분석용 원본</div>
+      </div>
+      <div class="svc" style="flex-direction:column;align-items:flex-start;border:1px solid var(--border);padding:10px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+          <div class="icon red" style="width:24px;height:24px;font-size:13px;">⚡</div>
+          <div class="svc-name">Azure Cache for Redis</div>
+        </div>
+        <div class="svc-desc">Salesforce 조회 캐시 (2초 타임아웃)<br>세션 임시 저장</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       Governance & Foundations
+  ══════════════════════════════════════════ -->
+  <div class="gov-bar">
+    <div class="section-title" style="margin-bottom:0;white-space:nowrap;border:none;padding:0;">
+      <span class="num">14</span> Governance &amp; Foundations
+    </div>
+    <div class="gov-item">
+      <div class="gov-icon">🔵</div>
+      <div class="gov-text">
+        <div class="gov-name">Azure Purview</div>
+        <div class="gov-role">Data Governance</div>
+      </div>
+    </div>
+    <div class="gov-item">
+      <div class="gov-icon">🔑</div>
+      <div class="gov-text">
+        <div class="gov-name">Azure Key Vault</div>
+        <div class="gov-role">Security &amp; Secrets</div>
+      </div>
+    </div>
+    <div class="gov-item">
+      <div class="gov-icon">📊</div>
+      <div class="gov-text">
+        <div class="gov-name">Azure Monitor</div>
+        <div class="gov-role">Monitoring + App Insights</div>
+      </div>
+    </div>
+    <div class="gov-item">
+      <div class="gov-icon">👤</div>
+      <div class="gov-text">
+        <div class="gov-name">Azure Active Directory</div>
+        <div class="gov-role">Identity &amp; Access</div>
+      </div>
+    </div>
+    <div class="gov-item">
+      <div class="gov-icon">📋</div>
+      <div class="gov-text">
+        <div class="gov-name">Azure Policy</div>
+        <div class="gov-role">Compliance</div>
+      </div>
+    </div>
+    <div class="gov-item">
+      <div class="gov-icon">💰</div>
+      <div class="gov-text">
+        <div class="gov-name">Azure Cost Management</div>
+        <div class="gov-role">Cost Control</div>
+      </div>
+    </div>
+    <div class="gov-item">
+      <div class="gov-icon">🔍</div>
+      <div class="gov-text">
+        <div class="gov-name">OpenTelemetry</div>
+        <div class="gov-role">분산 트레이싱</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 범례 + 푸터 ── -->
+  <div class="legend">
+    <div class="legend-item"><div class="leg-line"></div> Data Flow</div>
+    <div class="legend-item"><div class="leg-line" style="border-top:1px solid var(--gold);background:none;border-bottom:none;width:28px;height:0;border-left:none;border-right:none;"></div> Bi-directional Flow</div>
+    <div class="legend-item"><div class="leg-line dot"></div> Governance / Monitoring</div>
+    <div style="margin-left:16px;display:flex;gap:8px;align-items:center;">
+    </div>
+    <div class="legend-logo">
+      <div style="text-align:right;">
+        <div class="footer-brand">CHANEL</div>
+        <div style="font-size:9px;color:var(--text-sub);letter-spacing:0.1em;margin-top:2px;">Architecture v0.9</div>
+      </div>
+      <div style="margin-left:20px;padding-left:20px;border-left:1px solid var(--border);">
+        <div class="ms-logo">
+          <div class="ms-sq" style="background:#F25022;"></div>
+          <div class="ms-sq" style="background:#7FBA00;"></div>
+        </div>
+        <div class="ms-logo" style="margin-top:2px;">
+          <div class="ms-sq" style="background:#00A4EF;"></div>
+          <div class="ms-sq" style="background:#FFB900;"></div>
+        </div>
+        <div class="ms-label" style="margin-top:4px;">Microsoft Azure</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 하단 문구 -->
+  <div style="text-align:center;margin-top:28px;padding-top:20px;border-top:1px solid var(--border2);">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:300;letter-spacing:0.2em;color:var(--text-sub);font-style:italic;">
+      Simplicity is the ultimate sophistication
+    </div>
+  </div>
+</div>
+</body>
+</html>
